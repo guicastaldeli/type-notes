@@ -1,0 +1,8 @@
+//FOR MESSAGE DISAPPEAR AFTER RELOAD (RIGHT)
+const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
+const localStorageViewed = localStorage.getItem('has-viewed') === 'true';
+setShowMessage(hasViewed !== 'true' && !localStorageViewed);
+
+//FOR CONTINUE
+const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
+setShowMessage(hasViewed == null);

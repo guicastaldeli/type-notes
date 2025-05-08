@@ -1,6 +1,9 @@
 import React from 'react';
-import './styles/main/root/styles.scss';
+import { useEffect } from 'react';
 
+import './styles/main/styles.scss';
+
+import Message from './helloworld';
 import GlobalHeader from './global-header';
 
 export default function Main() {
@@ -10,7 +13,7 @@ export default function Main() {
 
         <div id="-global-container">
           {/* Bar */}
-          <div id="--bar">bar</div>
+          <div id="--bar"></div>
 
           {/* Notes Conteiner */}
           <div id="--notes-container">
@@ -24,7 +27,7 @@ export default function Main() {
 
           {/* Info */}
           <div id="--info">
-            info
+            <Message />
           </div>
         </div>
       </div>

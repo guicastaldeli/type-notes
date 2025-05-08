@@ -1,4 +1,4 @@
-import './styles/main/root/styles.scss';
+import './styles/main/styles.scss';
 
 export default function GlobalHeader() {
     return (
