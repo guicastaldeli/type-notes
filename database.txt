@@ -6,3 +6,7 @@ setShowMessage(hasViewed !== 'true' && !localStorageViewed);
 //FOR CONTINUE
 const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
 setShowMessage(hasViewed == null);
+
+{note.updatedAt !== note.createdAt && (
+    <span id="___created-info">Updated: {formatDate(note.updatedAt)}</span>
+)}

@@ -11,7 +11,8 @@ export default function Message() {
         async function check() {
             try {
                 const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
-                setShowMessage(hasViewed == null);
+                const localStorageViewed = localStorage.getItem('has-viewed') === 'true';
+                setShowMessage(hasViewed !== 'true' && !localStorageViewed);
             } catch(e) {
                 console.error('Database error:', e);
                 setShowMessage(!localStorage.getItem('has-viewed'));
