@@ -10,3 +10,26 @@ setShowMessage(hasViewed == null);
 {note.updatedAt !== note.createdAt && (
     <span id="___created-info">Updated: {formatDate(note.updatedAt)}</span>
 )}
+
+const addNote = async () => {
+        if(!newNote.title.trim() || !newNote.content.trim()) return;
+        
+        try {
+            const updId = await _addNote(newNote.title, newNote.content, currentSession);
+            setNotes(prev => 
+                [...prev, {
+                    id: updId,
+                    title: newNote.title,
+                    content: newNote.content,
+                    status: currentSession,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+            ]);
+
+            setNewNote({ title: '', content: '' });
+            onComplete();
+        } catch(e) {
+            console.error(e);
+        }
+    }

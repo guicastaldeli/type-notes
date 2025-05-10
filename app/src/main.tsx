@@ -45,7 +45,7 @@ export default function Main() {
               currentSession={currentSession}
               onComplete={noteCreated}
               onCancel={() => setIsCreating(false)}
-              key={currentSession}
+              key={Date.now()}
             />
           </div>
         </div>
@@ -60,7 +60,7 @@ export default function Main() {
             currentSession={currentSession}
             onComplete={noteCreated}
             onCancel={() => setIsCreating(false)}
-            key={currentSession}
+            key={Date.now()}
           />
         </div>
       </div>

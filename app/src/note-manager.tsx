@@ -20,28 +20,24 @@ import NoteComponent from "./note-component";
 export default function NoteManager({ isCreating, showNotes = false, currentSession, onComplete, onCancel }: NoteManagerProps) {
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
-    const [tUpdate, setTUpdate] = useState(false);
+    const [refresh, setRefresh] = useState(0)
 
     //Load Notes
         const updateNotes = useCallback(async () => {
-            setTUpdate(true);
-
             try {
                 const loadedNotes = await getNotes(currentSession);
                 setNotes(loadedNotes);
             } catch(e) {
                 console.error(e); 
-            } finally {
-                setTUpdate(false);
             }
         }, [currentSession]);
 
         useEffect(() => {
             updateNotes();
-        }, [currentSession]);
+        }, [currentSession, refresh]);
     //
 
-    const addNote = async (e: React.MouseEvent) => {
+    const addNote = async () => {
         if(!newNote.title.trim() || !newNote.content.trim()) return;
         
         try {
