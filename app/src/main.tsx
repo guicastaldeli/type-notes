@@ -7,18 +7,27 @@ import Message from './helloworld';
 import GlobalHeader from './global-header';
 import NoteManager from './note-manager';
 import { Session } from './note-manager';
+import { NoteProps } from './note-component';
 
 export default function Main() {
   const [isCreating, setIsCreating] = useState(false);
+  const [editNote, setEditNote] = useState<NoteProps | null>(null);
   const currentSession: Session = 'default';
 
   //Add Note
   const handleAddNote = () => {
     setIsCreating(true);
+    setEditNote(null);
   }
 
   //Note Created
   const noteCreated = () => {
+    setIsCreating(false);
+    setEditNote(null);
+  }
+
+  const handleNoteClick = (note: any) => {
+    setEditNote(note);
     setIsCreating(false);
   }
 
@@ -45,6 +54,7 @@ export default function Main() {
               currentSession={currentSession}
               onComplete={noteCreated}
               onCancel={() => setIsCreating(false)}
+              onNoteClick={handleNoteClick}
               key={Date.now()}
             />
           </div>
@@ -53,15 +63,22 @@ export default function Main() {
 
         {/* Info */}
         <div id="--info">
-          <Message />
-          <NoteManager
-            isCreating={isCreating}
-            showNotes={false}
-            currentSession={currentSession}
-            onComplete={noteCreated}
-            onCancel={() => setIsCreating(false)}
-            key={Date.now()}
-          />
+          {isCreating || editNote ? (
+            <NoteManager
+              isCreating={isCreating}
+              showNotes={false}
+              currentSession={currentSession}
+              onComplete={noteCreated}
+              onCancel={() => {
+                setIsCreating(false);
+                setEditNote(null);
+              }}
+              editingNote={editNote}
+              key={editNote ? editNote.id : 'create'}
+            />
+          ) : (
+            <Message />
+          )}
         </div>
       </div>
     </div>

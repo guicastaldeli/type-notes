@@ -128,6 +128,14 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         });
     }
 
+    export async function _updateNote(id: number, title: string, content: string): Promise<void> {
+        return initDB(db => {
+            const now = new Date().toISOString();
+
+            db.run("UPDATE notes SET title = ?, content = ?, updated_at = ? WHERE id = ?", [title, content, now, id]);
+        });
+    }
+
     export async function _deleteNote(id: number): Promise<void> {
         return initDB(db => {
             db.run("DELETE FROM notes WHERE id = ?", [id]);
