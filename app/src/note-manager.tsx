@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 import { getNotes, _addNote, _updateNoteStatus, _updateNote, _deleteNote } from "./database";
 import { NoteProps } from "./note-component";
@@ -23,6 +24,9 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const savedSelectionRef = useRef<Range | null>(null);
 
     //Load Notes
         const loadNotes = useCallback(async () => {
@@ -48,7 +52,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         if(!newNote.title.trim() || !newNote.content.trim()) return;
         
         try {
-            await _addNote(newNote.title, newNote.content, currentSession);
+            const clearContent = DOMPurify.sanitize(newNote.content)
+            await _addNote(newNote.title, clearContent, currentSession);
             setNewNote({ title: '', content: '' });
             await loadNotes();
             onComplete();
@@ -96,10 +101,62 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         }
     }
 
+    
+    //Color
+        const isEditing = !!editNote;
+
+        useEffect(() => {
+            if(contentRef.current) {
+                contentRef.current.innerHTML = isEditing
+                    ? (editNote?.content || '')
+                    : newNote.content
+                ;
+            }
+        }, [isEditing, editNote, newNote.content]);
+
+        const handleTextSelection = useCallback(() => {
+            const selection = window.getSelection();
+
+            if(!selection || selection.rangeCount === 0) {
+                setShowColorPicker(false);
+                return;
+            }
+
+            savedSelectionRef.current = selection.getRangeAt(0);
+            setShowColorPicker(!selection.isCollapsed);
+        }, []);
+
+        const applyTextColor = useCallback((color: string, e: React.MouseEvent) => {
+            e.stopPropagation();
+
+            const selection = savedSelectionRef.current;
+            if(!selection) return;
+
+            const newSelection = window.getSelection();
+            newSelection?.removeAllRanges();
+            newSelection?.addRange(selection.cloneRange());
+
+            document.execCommand('styleWithCSS', false, 'true');
+            document.execCommand('insertHTML', false, `<span style="color:${color}">${selection}</span>`);
+
+            if(contentRef.current) {
+                const newContent = contentRef.current.innerHTML;
+
+                if(editNote) {
+                    setEditNote({ ...editNote, content: newContent });
+                } else {
+                    setNewNote({ ...newNote, content: newContent });
+                }
+            }
+
+            setShowColorPicker(false);
+            contentRef.current?.focus();
+        }, [editNote, newNote]);
+    //
+
     //Main...
         //Note Creator/Editor
         const renderContent = () => {
-            const isEditing = !!editNote;
             const noteData = isEditing ? editNote : newNote;
             const saveHandler = isEditing ? updateNote : addNote;
 
@@ -129,17 +186,37 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                             />
                         </div>
                         <div id="_note-content-container">
-                            <textarea 
+                            <div
                                 id="__note-content"
-                                value={noteData.content}
-                                onChange={(e) => {
+                                ref={contentRef}
+                                contentEditable
+                                onSelect={handleTextSelection}
+                                onClick={handleTextSelection}
+                                onInput={() => {
+                                    if(!contentRef.current) return;
+                                    const newContent = contentRef.current.innerHTML;
+                                    
                                     if(isEditing) {
-                                        setEditNote({ ...editNote, content: e.target.value });
+                                        setEditNote({ ...editNote, content: newContent });
                                     } else {
-                                        setNewNote({ ...newNote, content: e.target.value })} 
+                                        setNewNote({ ...newNote, content: newContent })} 
                                     }
                                 }
                             />
+
+                            {/* Color Picker */}
+                            {showColorPicker && (
+                                <div className='color-picker'>
+                                    {[ '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF' ].map(color => (
+                                        <div
+                                            className='-color-option'
+                                            key={color}
+                                            style={{ backgroundColor: color }}
+                                            onClick={(e) => applyTextColor(color, e)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -4,3 +4,29 @@
         background-color: rgba(0, 0, 0, 0.309);
     }
 }
+
+.note-manager {
+    #---note-creator {
+        #_note-content-container {
+            #__note-content {
+                border: 0.1rem solid black;
+            }
+
+            #__note-content span {
+                display: inline;
+            }
+        }
+    }
+}
+/* color picker */
+.color-picker {
+    position: absolute;
+    padding: 2rem;
+
+    /* color option */
+    .-color-option {
+        width: 3rem;
+        height: 3rem;
+        border: 1px solid black;
+    }
+}

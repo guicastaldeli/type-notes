@@ -1,4 +1,5 @@
 import React from "react";
+import DOMPurify from "dompurify";
 
 type NoteStatus = 'default' | 'archived' | 'deleted';
 
@@ -28,13 +29,21 @@ function formatDate(dateString: string): string {
 }
 
 export default function NoteComponent({ note, currentSession, onUpdateStatus, onDelete }: NoteComponentProps) {
+    const cleanContent = DOMPurify.sanitize(note.content, {
+        ALLOWED_TAGS: ['span'],
+        ALLOWED_ATTR: ['style']
+    });
+
     return (
         <div id="_note-item">
             <div id="__note-title">
                 <p id="___note-title-el">{note.title}</p>
             </div>
             <div id="__note-content">
-                <span id="___note-content-el">{note.content}</span>
+                <div 
+                    id="___note-content-el"
+                    dangerouslySetInnerHTML={{ __html: cleanContent }} 
+                />
             </div>
 
             <div id="__note-actions">

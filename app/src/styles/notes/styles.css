@@ -3,4 +3,16 @@
 }
 #_note:hover {
   background-color: rgba(0, 0, 0, 0.309);
+}
+
+/* color picker */
+.color-picker {
+  position: absolute;
+  padding: 2rem;
+  /* color option */
+}
+.color-picker .-color-option {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid black;
 }/*# sourceMappingURL=styles.css.map */
