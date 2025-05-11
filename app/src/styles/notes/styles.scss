@@ -7,13 +7,13 @@
 
 .note-manager {
     #---note-creator {
-        #_note-content-container {
-            #__note-content {
+        #_note-main {
+            #__note-container {
                 border: 0.1rem solid black;
-            }
 
-            #__note-content span {
-                display: inline;
+                #___note-title-container, #___note-content-container span {
+                    display: inline;
+                }
             }
         }
     }

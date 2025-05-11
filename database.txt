@@ -33,3 +33,14 @@ const addNote = async () => {
             console.error(e);
         }
     }
+
+    onInput={() => {
+                                    if(!contentRef.current) return;
+                                    const newContent = contentRef.current.innerHTML;
+                                    
+                                    if(isEditing) {
+                                        setEditNote({ ...editNote, content: newContent });
+                                    } else {
+                                        setNewNote({ ...newNote, content: newContent })} 
+                                    }
+                                }

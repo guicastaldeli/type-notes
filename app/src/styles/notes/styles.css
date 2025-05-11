@@ -5,6 +5,13 @@
   background-color: rgba(0, 0, 0, 0.309);
 }
 
+.note-manager #---note-creator #_note-main #__note-container {
+  border: 0.1rem solid black;
+}
+.note-manager #---note-creator #_note-main #__note-container #___note-title-container, .note-manager #---note-creator #_note-main #__note-container #___note-content-container span {
+  display: inline;
+}
+
 /* color picker */
 .color-picker {
   position: absolute;

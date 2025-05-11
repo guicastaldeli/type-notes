@@ -25,6 +25,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
     const [showColorPicker, setShowColorPicker] = useState(false);
+    const titleRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
 
@@ -100,7 +101,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             console.error(e);
         }
     }
-
     
     //Color
         const isEditing = !!editNote;
@@ -154,6 +154,29 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         }, [editNote, newNote]);
     //
 
+    //Title and Content
+        const handleTitleInput = (e: React.FormEvent<HTMLDivElement>) => {
+            const newTitle = e.currentTarget.innerText;
+
+            if(isEditing) {
+                setEditNote({ ...editNote, title: newTitle });
+            } else {
+                setNewNote(prev => ({ ...prev, title: newTitle }));
+            }
+        }
+
+        const handleContentInput = () => {
+            if(!contentRef.current) return;
+            const newContent = contentRef.current.innerText;
+
+            if(isEditing) {
+                setEditNote({ ...editNote, content: newContent });
+            } else {
+                setNewNote({ ...newNote, content: newContent });
+            }
+        }
+    //
+
     //Main...
         //Note Creator/Editor
         const renderContent = () => {
@@ -172,37 +195,35 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                             </div>
                         </div>
         
-                        <div id="_note-title-container">
-                            <textarea 
-                                id="__note-title" 
-                                value={noteData.title} 
-                                onChange={(e) => {
-                                    if(isEditing) {
-                                        setEditNote({ ...editNote, title: e.target.value });
-                                    } else {
-                                        setNewNote({ ...newNote, title: e.target.value})}
-                                    }
-                                }
-                            />
-                        </div>
-                        <div id="_note-content-container">
-                            <div
-                                id="__note-content"
-                                ref={contentRef}
-                                contentEditable
-                                onSelect={handleTextSelection}
-                                onClick={handleTextSelection}
-                                onInput={() => {
-                                    if(!contentRef.current) return;
-                                    const newContent = contentRef.current.innerHTML;
-                                    
-                                    if(isEditing) {
-                                        setEditNote({ ...editNote, content: newContent });
-                                    } else {
-                                        setNewNote({ ...newNote, content: newContent })} 
-                                    }
-                                }
-                            />
+                        <div id="_note-main">
+                            <div id="__note-container">
+                                {/* Title */}
+                                {isCreating && (
+                                    <div id="___note-title-container">
+                                        <div
+                                            id="note-title-" 
+                                            ref={titleRef}
+                                            contentEditable
+                                            style={{ color: 'red', fontWeight: 'bolder' }}
+                                            onInput={handleTitleInput}
+                                            dangerouslySetInnerHTML={{ __html: noteData.title || '' }}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Content */}
+                                <div id="___note-content-container">
+                                    <div
+                                        id="note-content-"
+                                        ref={contentRef}
+                                        contentEditable
+                                        onSelect={handleTextSelection}
+                                        onClick={handleTextSelection}
+                                        onInput={handleContentInput}
+                                        dangerouslySetInnerHTML={{ __html: noteData.content || '' }}
+                                    />
+                                </div>
+                            </div>
 
                             {/* Color Picker */}
                             {showColorPicker && (
