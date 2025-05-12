@@ -5,7 +5,6 @@ type NoteStatus = 'default' | 'archived' | 'deleted';
 
 export interface NoteProps {    
     id: number;
-    title: string;
     content: string;
     status: NoteStatus;
     createdAt: string;
@@ -36,9 +35,6 @@ export default function NoteComponent({ note, currentSession, onUpdateStatus, on
 
     return (
         <div id="_note-item">
-            <div id="__note-title">
-                <p id="___note-title-el">{note.title}</p>
-            </div>
             <div id="__note-content">
                 <div 
                     id="___note-content-el"

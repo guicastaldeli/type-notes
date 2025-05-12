@@ -44,3 +44,15 @@ const addNote = async () => {
                                         setNewNote({ ...newNote, content: newContent })} 
                                     }
                                 }
+
+                                useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if(contentRef.current && !contentRef.current.contains(e.target as Node)) {
+                setShowFormatPicker(false);
+                setShowColorPicker(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    });

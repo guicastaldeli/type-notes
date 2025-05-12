@@ -15,14 +15,34 @@
   color: red;
 }
 
-/* color picker */
-.color-picker {
-  position: absolute;
-  padding: 2rem;
+/* toolbar */
+#__toolbar {
+  display: flex;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0;
+  border: 0;
+  /* format picker */
+  /* color picker */
+}
+#__toolbar #___format-picker {
+  display: flex;
+  flex-direction: column;
+  /* options */
+}
+#__toolbar #___format-picker #button-option-bold- {
+  font-weight: bolder;
+}
+#__toolbar #___format-picker #--button-option-italic- {
+  font-style: italic;
+}
+#__toolbar #___format-picker #--button-option-underline- {
+  text-decoration: underline;
+}
+#__toolbar #___color-picker {
   /* color option */
 }
-.color-picker .-color-option {
-  width: 3rem;
-  height: 3rem;
-  border: 1px solid black;
+#__toolbar #___color-picker .color-option- {
+  width: 1.5rem;
+  height: 1.5rem;
 }/*# sourceMappingURL=styles.css.map */

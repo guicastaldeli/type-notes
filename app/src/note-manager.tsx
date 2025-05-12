@@ -25,9 +25,10 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const titleRef = useRef<HTMLDivElement>(null);
+    const [showFormatPicker, setShowFormatPicker] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
+    const isEditing = !!editNote;
 
     //Load Notes
         const loadNotes = useCallback(async () => {
@@ -50,11 +51,11 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
     //Add Note
     const addNote = async () => {
-        if(!newNote.title.trim() || !newNote.content.trim()) return;
+        if(!newNote.content.trim()) return;
         
         try {
             const clearContent = DOMPurify.sanitize(newNote.content)
-            await _addNote(newNote.title, clearContent, currentSession);
+            await _addNote(clearContent, currentSession);
             setNewNote({ title: '', content: '' });
             await loadNotes();
             onComplete();
@@ -70,10 +71,10 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     }
 
     const updateNote = async () => {
-        if(!editNote || !editNote.title.trim() || !editNote.content.trim()) return;
+        if(!editNote || !editNote.content.trim()) return;
 
         try {
-            await _updateNote(editNote.id, editNote.title, editNote.content);
+            await _updateNote(editNote.id, editNote.content);
             setEditNote(null);
             await loadNotes();
             onComplete();
@@ -101,43 +102,126 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             console.error(e);
         }
     }
+
+    //Format
+        //Format Options
+            const formatOptions = [
+                {
+                    name: 'bold',
+                    title: 'Bold',
+                    command: 'bold',
+                    label: 'B',
+                    style: { fontWeight: 'bold' }
+                },
+                {
+                    name: 'italic',
+                    title: 'Italic',
+                    command: 'italic',
+                    label: 'I',
+                    style: { fontStyle: 'italic' }
+                },
+                {
+                    name: 'underline',
+                    title: 'Underline',
+                    command: 'underline',
+                    label: 'U',
+                    style: { textDecoration: 'underline' }
+                }
+            ];
+        //
+
+        const applyTextFormat = useCallback((command: string, e: React.MouseEvent) => {
+            e.preventDefault();
+
+            const savedRange = savedSelectionRef.current;
+            if(!savedRange) return;
+
+            const selection = window.getSelection();
+            if(selection) {
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+            }
+
+            document.execCommand(command, false, '');
+
+            if(contentRef.current) {
+                const newContent = contentRef.current.innerHTML;
+
+                if(editNote) {
+                    setEditNote({ ...editNote, content: newContent });
+                } else {
+                    setNewNote({ ...newNote, content: newContent });
+                }
+            }
+        }, [editNote, newNote]);
+    //
     
     //Color
-        const isEditing = !!editNote;
-
         useEffect(() => {
             if(contentRef.current) {
-                contentRef.current.innerHTML = isEditing
-                    ? (editNote?.content || '')
-                    : newNote.content
-                ;
+                const exContent = isEditing ? editNote?.content || '' : newNote.content;
+                if(contentRef.current.innerHTML !== exContent) contentRef.current.innerHTML = exContent;
             }
-        }, [isEditing, editNote, newNote.content]);
+        }, [isEditing, editNote?.content, newNote.content]);
 
         const handleTextSelection = useCallback(() => {
             const selection = window.getSelection();
-
             if(!selection || selection.rangeCount === 0) {
+                setShowFormatPicker(false);
                 setShowColorPicker(false);
                 return;
             }
 
             savedSelectionRef.current = selection.getRangeAt(0);
-            setShowColorPicker(!selection.isCollapsed);
+
+            const isSelected = !selection.isCollapsed;
+            setShowFormatPicker(isSelected);
+            setShowColorPicker(isSelected);
         }, []);
 
-        const applyTextColor = useCallback((color: string, e: React.MouseEvent) => {
-            e.stopPropagation();
+        //New Line
+            const insertLine = () => {
+                const selection = window.getSelection();
+                const range = selection?.getRangeAt(0);
+                const br = document.createElement('br');
+                range?.insertNode(br);
+                handleContentInput();
+            }
 
-            const selection = savedSelectionRef.current;
-            if(!selection) return;
+            const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+                if(e.key === ' ') {
+                    e.preventDefault();
+                    insertLine();
+                }
+            }
+        //
 
-            const newSelection = window.getSelection();
-            newSelection?.removeAllRanges();
-            newSelection?.addRange(selection.cloneRange());
+        //Color Options
+            const colorOptions = [
+                { name: 'Black', value: 'rgb(0, 0, 0)' },
+                { name: 'Red', value: 'rgb(189, 33, 33)' },
+                { name: 'Green', value: 'rgb(67, 188, 56)' },
+                { name: 'Blue', value: 'rgb(26, 118, 197)' },
+                { name: 'Yellow', value: 'rgb(241, 187, 9)' },
+                { name: 'Purple', value: 'rgb(153, 21, 205)' },
+                { name: 'Cyan', value: 'rgb(29, 181, 201)' }
+            ];
+        //
+
+        const applyTextColor = useCallback((value: string, e: React.MouseEvent) => {
+            e.preventDefault();
+            
+            const savedRange = savedSelectionRef.current;
+            if(!savedRange) return;
+
+            const selection = window.getSelection();
+            if(selection) {
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+            }
 
             document.execCommand('styleWithCSS', false, 'true');
-            document.execCommand('insertHTML', false, `<span style="color:${color}">${selection}</span>`);
+            document.execCommand('foreColor', false, value);
 
             if(contentRef.current) {
                 const newContent = contentRef.current.innerHTML;
@@ -150,8 +234,20 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             }
 
             setShowColorPicker(false);
-            contentRef.current?.focus();
         }, [editNote, newNote]);
+    //
+
+    //Content
+        const handleContentInput = useCallback(() => {
+            if(!contentRef.current) return;
+            let newContent = contentRef.current.innerHTML;
+
+            if(isEditing) {
+                setEditNote({ ...editNote, content: newContent });
+            } else {
+                setNewNote({ ...newNote, content: newContent });
+            }
+        }, [isEditing, editNote, newNote]);
     //
 
     //Note List
@@ -163,7 +259,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                         id="_note"
                         key={note.id} 
                         onClick={() => { 
-                                if(onNoteClick)
+                                if(onNoteClick) 
                                 onNoteClick(note) 
                             }
                         }>
@@ -180,91 +276,10 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         )
     }
 
-    //Title and Content
-        const handleTitleInput = (e: React.FormEvent<HTMLDivElement>) => {
-            const newTitle = e.currentTarget.innerText;
-
-            if(isEditing) {
-                setEditNote({ ...editNote, title: newTitle });
-            } else {
-                setNewNote(prev => ({ ...prev, title: newTitle }));
-            }
-        }
-
-        const handleContentInput = () => {
-            if(!contentRef.current) return;
-            const newContent = contentRef.current.innerText;
-
-            if(isEditing) {
-                setEditNote({ ...editNote, content: newContent });
-            } else {
-                setNewNote({ ...newNote, content: newContent });
-            }
-        }
-    //
-
     //Main...
         const renderContent = () => {
             const noteData = isEditing ? editNote : newNote;
             const saveHandler = isEditing ? updateNote : addNote;
-
-            const NoteContainer = ({ initialData, onUpdate, onTextSelection, initialFocus } : {
-                initialData: { title: string, content: string }
-                onUpdate: (data: { title: string, content: string, html: string }) => void,
-                onTextSelection: () => void,
-                initialFocus?: boolean
-            }) => {
-                const containerRef = useRef<HTMLDivElement>(null);
-
-                useEffect(() => {
-                    if(initialFocus && containerRef.current) {
-                        containerRef.current.focus();
-                    }
-                }, [initialFocus]);
-
-                const handleInput = () => {
-                    if(!containerRef.current) return;
-
-                    const html = containerRef.current.innerHTML;
-                    const titleDiv = containerRef.current.querySelector('#note-title-');
-                    const contentDiv = containerRef.current.querySelector('#note-content-');
-                    const title = titleDiv?.textContent?.trim() || '';
-                    const content = contentDiv?.textContent?.trim() || '';
-
-                    onUpdate({ title, content, html });
-                }
-
-                const handleKeyDown = (e: React.KeyboardEvent) => {
-                    if(e.key === 'Enter') {
-                        e.preventDefault();
-                        document.execCommand('insertHTML', false, '<div><br></div>');
-                    }
-                }
-
-                return (
-                    <div
-                        ref={containerRef}
-                        contentEditable
-                        id="__note-container"
-                        onInput={handleInput}
-                        onKeyDown={handleKeyDown}
-                        onSelect={onTextSelection}
-                        onClick={onTextSelection}
-                        dangerouslySetInnerHTML={{ __html: initialData.title || initialData.content ?
-                            `
-                                <div id="___note-title-container">
-                                    <div id="note-title-">${initialData.title}</div>
-                                </div>
-
-                                <div id="___note-content-container">
-                                    <div id="note-content">${initialData.content}</div>
-                                </div>
-                            ` : `<p>null</p`
-                        }}
-                    >
-                    </div>
-                )
-            }
 
             return (
                 <div className="note-manager">
@@ -280,33 +295,53 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         
                         <div id="_note-main">
                             <div id="__note-container">
-                                <NoteContainer
-                                    initialData={noteData}
-                                    onTextSelection={handleTextSelection}
-                                    initialFocus={isCreating && !initialEditNote}
-                                    onUpdate={(updated) => {
-                                        if(isEditing) {
-                                            setEditNote({ ...editNote!, ...updated });
-                                        } else {
-                                            setNewNote({ ...newNote, ...updated });
-                                        }
-                                    }}
-                                />
+                                <div id="___note-content-container">
+                                    <div
+                                        id="note-content-"
+                                        ref={contentRef}
+                                        contentEditable="true"
+                                        onSelect={handleTextSelection}
+                                        onClick={handleTextSelection}
+                                        onInput={handleContentInput}
+                                        onKeyDown={handleKeyDown}
+                                    />
+                                </div>
                             </div>
 
-                            {/* Color Picker */}
-                            {showColorPicker && (
-                                <div className='color-picker'>
-                                    {[ '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF' ].map(color => (
-                                        <div
-                                            className='-color-option'
-                                            key={color}
-                                            style={{ backgroundColor: color }}
-                                            onClick={(e) => applyTextColor(color, e)}
-                                        />
-                                    ))}
-                                </div>
-                            )}
+                            <div id="__toolbar">
+                                {/* Format Picker */}
+                                {showFormatPicker && (
+                                    <div id='___format-picker'>
+                                        {formatOptions.map((opt) => (
+                                            <button
+                                                id={`button-option-${opt.name}-`}
+                                                key={opt.name}
+                                                onClick={(e) => applyTextFormat(opt.command, e)}
+                                                title={opt.title}
+                                                style={opt.style}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Color Picker */}
+                                {showColorPicker && (
+                                    <div id='___color-picker'>
+                                        {colorOptions.map(value => (
+                                            <div
+                                                className="color-option-"
+                                                id={`color-option-${value.value}-`}
+                                                title={value.name}
+                                                key={value.value}
+                                                style={{ backgroundColor: value.value }}
+                                                onClick={(e) => applyTextColor(value.value, e)}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

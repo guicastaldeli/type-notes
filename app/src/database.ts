@@ -30,7 +30,6 @@ export async function setDB(): Promise<Database> {
     dbInstance.exec(`
         CREATE TABLE IF NOT EXISTS notes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
             content TEXT NOT NULL,
             status TEXT DEFAULT 'default',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -113,10 +112,10 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         return date.replace(' ', 'T') + 'Z';
     }
 
-    export async function _addNote(title: string, content: string, status: string): Promise<number> {
+    export async function _addNote(content: string, status: string): Promise<number> {
         return initDB(db => {
             const now = new Date().toISOString();
-            db.run("INSERT INTO notes(title, content, status, created_at) VALUES(?, ?, ?, ?)", [title, content, status, now]);
+            db.run("INSERT INTO notes(content, status, created_at) VALUES(?, ?, ?)", [content, status, now]);
             return db.exec("SELECT last_insert_rowid()")[0].values[0][0] as number;
         });
     }
@@ -128,11 +127,11 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         });
     }
 
-    export async function _updateNote(id: number, title: string, content: string): Promise<void> {
+    export async function _updateNote(id: number, content: string): Promise<void> {
         return initDB(db => {
             const now = new Date().toISOString();
 
-            db.run("UPDATE notes SET title = ?, content = ?, updated_at = ? WHERE id = ?", [title, content, now, id]);
+            db.run("UPDATE notes SET content = ?, updated_at = ? WHERE id = ?", [content, now, id]);
         });
     }
 
