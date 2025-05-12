@@ -183,6 +183,64 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             const noteData = isEditing ? editNote : newNote;
             const saveHandler = isEditing ? updateNote : addNote;
 
+            const NoteContainer = ({ initialData, onUpdate, onTextSelection, initialFocus } : {
+                initialData: { title: string, content: string }
+                onUpdate: (data: { title: string, content: string, html: string }) => void,
+                onTextSelection: () => void,
+                initialFocus?: boolean
+            }) => {
+                const containerRef = useRef<HTMLDivElement>(null);
+
+                useEffect(() => {
+                    if(initialFocus && containerRef.current) {
+                        containerRef.current.focus();
+                    }
+                }, [initialFocus]);
+
+                const handleInput = () => {
+                    if(!containerRef.current) return;
+
+                    const html = containerRef.current.innerHTML;
+                    const titleDiv = containerRef.current.querySelector('#note-title-');
+                    const contentDiv = containerRef.current.querySelector('#note-content-');
+                    const title = titleDiv?.textContent?.trim() || '';
+                    const content = contentDiv?.textContent?.trim() || '';
+
+                    onUpdate({ title, content, html });
+                }
+
+                const handleKeyDown = (e: React.KeyboardEvent) => {
+                    if(e.key === 'Enter') {
+                        e.preventDefault();
+                        document.execCommand('insertHTML', false, '<div><br></div>');
+                    }
+                }
+
+                return (
+                    <div
+                        ref={containerRef}
+                        contentEditable
+                        id="__note-container"
+                        onInput={handleInput}
+                        onKeyDown={handleKeyDown}
+                        onSelect={onTextSelection}
+                        onClick={onTextSelection}
+                        dangerouslySetInnerHTML={{ __html: initialData.title || initialData.content ?
+                            `
+                                <div id="___note-title-container">
+                                    <div id="note-title-">${initialData.title}</div>
+                                </div>
+
+                                <div id="___note-content-container">
+                                    <div id="note-content">${initialData.content}</div>
+                                </div>
+                            ` : `<p>null</p`
+                        }}
+                    >
+                    </div>
+                )
+            }
+
             return (
                 <div className="note-manager">
                     <div id="---note-creator">
@@ -197,32 +255,18 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         
                         <div id="_note-main">
                             <div id="__note-container">
-                                {/* Title */}
-                                {isCreating && (
-                                    <div id="___note-title-container">
-                                        <div
-                                            id="note-title-" 
-                                            ref={titleRef}
-                                            contentEditable
-                                            style={{ color: 'red', fontWeight: 'bolder' }}
-                                            onInput={handleTitleInput}
-                                            dangerouslySetInnerHTML={{ __html: noteData.title || '' }}
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Content */}
-                                <div id="___note-content-container">
-                                    <div
-                                        id="note-content-"
-                                        ref={contentRef}
-                                        contentEditable
-                                        onSelect={handleTextSelection}
-                                        onClick={handleTextSelection}
-                                        onInput={handleContentInput}
-                                        dangerouslySetInnerHTML={{ __html: noteData.content || '' }}
-                                    />
-                                </div>
+                                <NoteContainer
+                                    initialData={noteData}
+                                    onTextSelection={handleTextSelection}
+                                    initialFocus={isCreating && !initialEditNote}
+                                    onUpdate={(updated) => {
+                                        if(isEditing) {
+                                            setEditNote({ ...editNote!, ...updated });
+                                        } else {
+                                            setNewNote({ ...newNote, ...updated });
+                                        }
+                                    }}
+                                />
                             </div>
 
                             {/* Color Picker */}
@@ -244,34 +288,35 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             )
         }
 
+        //Exec...
         if(isCreating || editNote) return renderContent();
-
-        //Note List
-        if(showNotes) {
-            return (
-                <div className="notes-list">
-                    {notes.map((note) => (
-                        <div 
-                            id="_note"
-                            key={note.id} 
-                            onClick={() => { 
-                                    if(onNoteClick) 
-                                    onNoteClick(note) 
-                                }
-                            }>
-                            <NoteComponent
-                                key={`note-${note.id}`}
-                                note={note}
-                                currentSession={currentSession}
-                                onUpdateStatus={updNoteStatus}
-                                onDelete={deleteNote}
-                            />
-                        </div>
-                    ))}
-                </div>
-            )
-        }
     //
+
+    //Note List
+    if(showNotes) {
+        return (
+            <div className="notes-list">
+                {notes.map((note) => (
+                    <div 
+                        id="_note"
+                        key={note.id} 
+                        onClick={() => { 
+                                if(onNoteClick)
+                                onNoteClick(note) 
+                            }
+                        }>
+                        <NoteComponent
+                            key={`note-${note.id}`}
+                            note={note}
+                            currentSession={currentSession}
+                            onUpdateStatus={updNoteStatus}
+                            onDelete={deleteNote}
+                        />
+                    </div>
+                ))}
+            </div>
+        )
+    }
 
     return null;
 }

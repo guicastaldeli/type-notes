@@ -11,6 +11,9 @@
 .note-manager #---note-creator #_note-main #__note-container #___note-title-container, .note-manager #---note-creator #_note-main #__note-container #___note-content-container span {
   display: inline;
 }
+.note-manager #---note-creator #_note-main #__note-container #___note-title-container #note-title- {
+  color: red;
+}
 
 /* color picker */
 .color-picker {
