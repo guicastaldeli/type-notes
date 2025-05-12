@@ -154,6 +154,32 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         }, [editNote, newNote]);
     //
 
+    //Note List
+    if(showNotes) {
+        return (
+            <div className="notes-list">
+                {notes.map((note) => (
+                    <div 
+                        id="_note"
+                        key={note.id} 
+                        onClick={() => { 
+                                if(onNoteClick)
+                                onNoteClick(note) 
+                            }
+                        }>
+                        <NoteComponent
+                            key={`note-${note.id}`}
+                            note={note}
+                            currentSession={currentSession}
+                            onUpdateStatus={updNoteStatus}
+                            onDelete={deleteNote}
+                        />
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     //Title and Content
         const handleTitleInput = (e: React.FormEvent<HTMLDivElement>) => {
             const newTitle = e.currentTarget.innerText;
@@ -178,7 +204,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //
 
     //Main...
-        //Note Creator/Editor
         const renderContent = () => {
             const noteData = isEditing ? editNote : newNote;
             const saveHandler = isEditing ? updateNote : addNote;
@@ -291,32 +316,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         //Exec...
         if(isCreating || editNote) return renderContent();
     //
-
-    //Note List
-    if(showNotes) {
-        return (
-            <div className="notes-list">
-                {notes.map((note) => (
-                    <div 
-                        id="_note"
-                        key={note.id} 
-                        onClick={() => { 
-                                if(onNoteClick)
-                                onNoteClick(note) 
-                            }
-                        }>
-                        <NoteComponent
-                            key={`note-${note.id}`}
-                            note={note}
-                            currentSession={currentSession}
-                            onUpdateStatus={updNoteStatus}
-                            onDelete={deleteNote}
-                        />
-                    </div>
-                ))}
-            </div>
-        )
-    }
 
     return null;
 }
