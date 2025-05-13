@@ -43,33 +43,86 @@ export default function NoteComponent({ note, currentSession, onUpdateStatus, on
             </div>
 
             <div id="__note-actions">
+                {/* Default */}
                 {currentSession === 'default' && (
                     <div id="___act-session-default">
                         <div id="container-btn-archive-">
-                            <button id="btn-archive--" onClick={() => onUpdateStatus(note.id, 'archived')}>Archive</button>
+                            <button 
+                                id="btn-archive--" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onUpdateStatus(note.id, 'archived');
+                                }}
+                            >
+                                Archive
+                            </button>
                         </div>
                         <div id="container-btn-delete-">
-                            <button id="btn-delete--" onClick={() => onUpdateStatus(note.id, 'deleted')}>Delete</button>
+                            <button 
+                                id="btn-delete--" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onUpdateStatus(note.id, 'deleted');
+                                }}
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 )}
+
+                {/* Archived */}
                 {currentSession === 'archived' && (
                     <div id="___act-session-archived">
                         <div id="container-btn-restore-">
-                            <button id="btn-restore--" onClick={() => onUpdateStatus(note.id, 'default')}>Restore</button>
+                            <button 
+                                id="btn-restore--" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onUpdateStatus(note.id, 'default');
+                                }}
+                            >
+                                Restore
+                            </button>
                         </div>
                         <div id="container-btn-delete-">
-                            <button id="btn-delete--" onClick={() => onUpdateStatus(note.id, 'deleted')}>Delete</button>
+                            <button 
+                                id="btn-delete--" 
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    onUpdateStatus(note.id, 'deleted'); 
+                                }}
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 )}
+
+                {/* Deleted */}
                 {currentSession === 'deleted' && (
                     <div id="___act-session-deleted">
                         <div id="container-btn-restore-">
-                            <button id="btn-restore--" onClick={() => onUpdateStatus(note.id, 'default')}>Restore</button>
+                            <button 
+                                id="btn-restore--" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onUpdateStatus(note.id, 'default');
+                                }}
+                            >
+                                Restore
+                            </button>
                         </div>
                         <div id="container-btn-delete-perm-">
-                            <button id="btn-delete-perm" onClick={() => onDelete(note.id)}>Delete!</button>
+                            <button 
+                                id="btn-delete-perm" 
+                                onClick={(e) => {
+                                    e.stopPropagation(); 
+                                    onDelete(note.id);
+                                }}
+                            >
+                                Delete!
+                            </button>
                         </div>
                     </div>
                 )}

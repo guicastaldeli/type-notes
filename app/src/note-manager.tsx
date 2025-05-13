@@ -24,8 +24,9 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
-    const [showColorPicker, setShowColorPicker] = useState(false);
+    const [showSizePicker, setShowSizePicker] = useState(false);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
+    const [showColorPicker, setShowColorPicker] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -96,12 +97,49 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //Delete Note
     const deleteNote = async(id: number) => {
         try {
+            if(editNote?.id === id) {
+                setEditNote(null);
+                onComplete();
+            }
+            
             await _deleteNote(id);
             await loadNotes();
         } catch(e) {
             console.error(e);
         }
     }
+
+    //Size
+        //Size Options
+            const sizeOptions = Array.from({ length: 48 }, (_, i) => i + 1);
+        //
+
+        const applyTextSize = useCallback((size: number, e: React.MouseEvent) => {
+            e.preventDefault();
+
+            const savedRange = savedSelectionRef.current;
+            if(!savedRange) return;
+
+            const selection = window.getSelection();
+            if(selection) {
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+
+                document.execCommand('styleWithCSS', false, 'true');
+                document.execCommand('fontSize', false, '7');
+            }
+
+            if(contentRef.current) {
+                const newContent = contentRef.current.innerHTML;
+
+                if(editNote) {
+                    setEditNote({ ...editNote, content: newContent });
+                } else {
+                    setNewNote({ ...newNote, content: newContent });
+                }
+            }
+        }, [editNote, newNote])
+    //
 
     //Format
         //Format Options
@@ -157,45 +195,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //
     
     //Color
-        useEffect(() => {
-            if(contentRef.current) {
-                const exContent = isEditing ? editNote?.content || '' : newNote.content;
-                if(contentRef.current.innerHTML !== exContent) contentRef.current.innerHTML = exContent;
-            }
-        }, [isEditing, editNote?.content, newNote.content]);
-
-        const handleTextSelection = useCallback(() => {
-            const selection = window.getSelection();
-            if(!selection || selection.rangeCount === 0) {
-                setShowFormatPicker(false);
-                setShowColorPicker(false);
-                return;
-            }
-
-            savedSelectionRef.current = selection.getRangeAt(0);
-
-            const isSelected = !selection.isCollapsed;
-            setShowFormatPicker(isSelected);
-            setShowColorPicker(isSelected);
-        }, []);
-
-        //New Line
-            const insertLine = () => {
-                const selection = window.getSelection();
-                const range = selection?.getRangeAt(0);
-                const br = document.createElement('br');
-                range?.insertNode(br);
-                handleContentInput();
-            }
-
-            const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-                if(e.key === ' ') {
-                    e.preventDefault();
-                    insertLine();
-                }
-            }
-        //
-
         //Color Options
             const colorOptions = [
                 { name: 'Black', value: 'rgb(0, 0, 0)' },
@@ -238,6 +237,46 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //
 
     //Content
+        useEffect(() => {
+            if(contentRef.current) {
+                const exContent = isEditing ? editNote?.content || '' : newNote.content;
+                if(contentRef.current.innerHTML !== exContent) contentRef.current.innerHTML = exContent;
+            }
+        }, [isEditing, editNote?.content, newNote.content]);
+
+        const handleTextSelection = useCallback(() => {
+            const selection = window.getSelection();
+            if(!selection || selection.rangeCount === 0) {
+                setShowSizePicker(false);
+                setShowFormatPicker(false);
+                setShowColorPicker(false);
+                return;
+            }
+
+            savedSelectionRef.current = selection.getRangeAt(0);
+            const isSelected = !selection.isCollapsed;
+            setShowSizePicker(isSelected);
+            setShowFormatPicker(isSelected);
+            setShowColorPicker(isSelected);
+        }, []);
+
+        //New Line
+            const insertLine = () => {
+                const selection = window.getSelection();
+                const range = selection?.getRangeAt(0);
+                const br = document.createElement('br');
+                range?.insertNode(br);
+                handleContentInput();
+            }
+
+            const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+                if(e.key === ' ') {
+                    e.preventDefault();
+                    insertLine();
+                }
+            }
+        //
+
         const handleContentInput = useCallback(() => {
             if(!contentRef.current) return;
             let newContent = contentRef.current.innerHTML;
@@ -258,8 +297,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                     <div 
                         id="_note"
                         key={note.id} 
-                        onClick={() => { 
-                                if(onNoteClick) 
+                        onClick={() => {
+                                if(onNoteClick)
                                 onNoteClick(note) 
                             }
                         }>
@@ -309,6 +348,26 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                             </div>
 
                             <div id="__toolbar">
+                                {/* Size Picker */}
+                                {showSizePicker && (
+                                    <div id="___size-picker">
+                                        <select 
+                                            id="select-size-"
+                                            onChange={(e) => applyTextSize(Number(e.target.value), e as any)}
+                                            value=""
+                                        >
+                                            {sizeOptions.map(size => (
+                                                <option 
+                                                    id="option-size--"
+                                                    key={size}
+                                                    value={size}
+                                                >
+                                                    {size}px
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
                                 {/* Format Picker */}
                                 {showFormatPicker && (
                                     <div id='___format-picker'>
