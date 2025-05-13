@@ -11,13 +11,9 @@
             #__note-container {
                 border: 0.1rem solid black;
 
-                #___note-title-container, #___note-content-container span {
-                    display: inline;
-                }
-
-                #___note-title-container {
-                    #note-title- {
-                        color: red;
+                #___note-content-container {
+                    #note-content- span {
+                        font-size: 21px;
                     }
                 }
             }

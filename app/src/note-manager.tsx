@@ -14,7 +14,7 @@ import NoteComponent from "./note-component";
         showNotes?: boolean;
         currentSession: Session;
         onComplete: () => void;
-        onCancel: () => void
+        onCancel: () => void;
         onNoteClick?: (note: NoteProps) => void;
         editingNote?: NoteProps | null;
     }
@@ -26,7 +26,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
     const [showToolbar, setShowToolbar] = useState(false);
     const [showSizePicker, setShowSizePicker] = useState(false);
-    const [selectedSize, setSelectedSize] = useState<number>(21);
+    const [selectedSize, setSelectedSize] = useState<number>();
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,10 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
     //Add Note
     const addNote = async () => {
-        if(!newNote.content.trim()) return;
+        if(!newNote.content.trim()) {
+            cancelCreation();
+            return;
+        }
         
         try {
             const clearContent = DOMPurify.sanitize(newNote.content)
@@ -74,10 +77,21 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     }
 
     const updateNote = async () => {
-        if(!editNote || !editNote.content.trim()) return;
+        if(!editNote) return;
+
+        const currentContent = contentRef.current?.innerHTML || editNote.content;
+        const isEmpty = !currentContent.trim() || currentContent.replace(/<br\s*\/?>/gi, '').trim() === '';
+
+        if(isEmpty) {
+            if(editNote.id) await deleteNote(editNote.id);
+            setEditNote(null);
+            onComplete();
+            return;
+        }
 
         try {
-            await _updateNote(editNote.id, editNote.content);
+            const clearContent = DOMPurify.sanitize(currentContent);
+            await _updateNote(editNote.id, clearContent);
             setEditNote(null);
             await loadNotes();
             onComplete();
@@ -131,10 +145,13 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 const execFontSize = Math.min(Math.max(Math.ceil(size / 7), 1), 7);
                 document.execCommand('styleWithCSS', false, 'true');
                 document.execCommand('fontSize', false, execFontSize.toString());
+
+                savedSelectionRef.current = selection.getRangeAt(0);
             }
 
             if(contentRef.current) {
                 const newContent = contentRef.current.innerHTML;
+                setSelectedSize(size);
 
                 if(editNote) {
                     setEditNote({ ...editNote, content: newContent });
@@ -146,14 +163,19 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
         //Detect Font Size
             const detectFontSize = (html: string): number => {
-                if(!html) return 21;
+                if(!html || html === '<br>') return 21;
 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
 
-                const elStyle = tempDiv.querySelector('[style*="font-size"], font[size]');
-                if(elStyle) {
-                    const size = window.getComputedStyle(elStyle).fontSize;
+                const el = Array.from(tempDiv.querySelectorAll('*')).filter(e => {
+                    const style = window.getComputedStyle(e);
+                    return style.fontSize !== 'inherit' && style.fontSize !== 'medium';
+                });
+                
+                if(el.length > 0) {
+                    const lastEl = el[el.length - 1];
+                    const size = window.getComputedStyle(lastEl).fontSize;
                     const sizeValue = parseInt(size, 10);
                     return isNaN(sizeValue) ? 21 : sizeValue;
                 }
@@ -271,6 +293,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         useEffect(() => {
             if(contentRef.current) {
                 const exContent = isEditing ? editNote?.content || '' : newNote.content;
+                
                 if(contentRef.current.innerHTML !== exContent) {
                     contentRef.current.innerHTML = exContent;
 
@@ -320,11 +343,12 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         const handleContentInput = useCallback(() => {
             if(!contentRef.current) return;
             let newContent = contentRef.current.innerHTML;
+            const isEmpty = !newContent.trim() || newContent.replace(/<br\s*\/?>/gi, '').trim() === '';
 
             if(isEditing) {
-                setEditNote({ ...editNote, content: newContent });
+                setEditNote({ ...editNote, content: isEmpty ? '' : newContent });
             } else {
-                setNewNote({ ...newNote, content: newContent });
+                setNewNote({ ...newNote, content: isEditing ? '' : newContent });
             }
         }, [isEditing, editNote, newNote]);
     //
@@ -365,10 +389,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                     <div id="---note-creator">
                         <div id="_note-actions">
                             <div id="__note-save-container">
-                                <button onClick={saveHandler}>Save</button>
-                            </div>
-                            <div id="__note-cancel-container">
-                                <button onClick={cancelCreation}>Cancel</button>
+                                <button onClick={saveHandler}>{currentSession == 'default' ? 'Home' : ''}</button>
                             </div>
                         </div>
         

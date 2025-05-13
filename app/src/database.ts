@@ -100,6 +100,7 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
                 note.updatedAt = convertDate(note.updated_at?.toString());
                 notes.push(note);
             };
+            
             stmt.free();
             return notes;
         });
