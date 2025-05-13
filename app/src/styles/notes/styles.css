@@ -20,29 +20,45 @@
   display: flex;
   width: -moz-fit-content;
   width: fit-content;
-  margin: 0;
-  border: 0;
-  /* format picker */
+  justify-content: center;
+  align-items: center;
+  width: 5rem;
+  height: 8rem;
+  gap: 2rem;
+  background-color: rgb(155, 155, 155);
+}
+#__toolbar #items {
+  display: flex;
+  width: -moz-fit-content;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
   /* color picker */
 }
-#__toolbar #___format-picker {
+#__toolbar #items #text-custom {
+  display: flex;
+  flex-direction: column;
+  /* size picker */
+  /* format picker */
+}
+#__toolbar #items #text-custom #___format-picker {
   display: flex;
   flex-direction: column;
   /* options */
 }
-#__toolbar #___format-picker #button-option-bold- {
+#__toolbar #items #text-custom #___format-picker #button-option-bold- {
   font-weight: bolder;
 }
-#__toolbar #___format-picker #--button-option-italic- {
+#__toolbar #items #text-custom #___format-picker #--button-option-italic- {
   font-style: italic;
 }
-#__toolbar #___format-picker #--button-option-underline- {
+#__toolbar #items #text-custom #___format-picker #--button-option-underline- {
   text-decoration: underline;
 }
-#__toolbar #___color-picker {
+#__toolbar #items #___color-picker {
   /* color option */
 }
-#__toolbar #___color-picker .color-option- {
+#__toolbar #items #___color-picker .color-option- {
   width: 1.5rem;
   height: 1.5rem;
 }/*# sourceMappingURL=styles.css.map */

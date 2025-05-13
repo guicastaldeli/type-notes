@@ -24,7 +24,9 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
+    const [showToolbar, setShowToolbar] = useState(false);
     const [showSizePicker, setShowSizePicker] = useState(false);
+    const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -111,7 +113,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
     //Size
         //Size Options
-            const sizeOptions = Array.from({ length: 48 }, (_, i) => i + 1);
+            const sizeOptions = Array.from({ length: 56 }, (_, i) => i + 1)
+            .filter(size => size % 7 === 0);
         //
 
         const applyTextSize = useCallback((size: number, e: React.MouseEvent) => {
@@ -125,8 +128,9 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 selection.removeAllRanges();
                 selection.addRange(savedRange);
 
+                const execFontSize = Math.min(Math.max(Math.ceil(size / 7), 1), 7);
                 document.execCommand('styleWithCSS', false, 'true');
-                document.execCommand('fontSize', false, '7');
+                document.execCommand('fontSize', false, execFontSize.toString());
             }
 
             if(contentRef.current) {
@@ -138,7 +142,36 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                     setNewNote({ ...newNote, content: newContent });
                 }
             }
-        }, [editNote, newNote])
+        }, [editNote, newNote]);
+
+        //Detect Font Size
+            const detectFontSize = (html: string): number => {
+                if(!html) return 21;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                const elStyle = tempDiv.querySelector('[style*="font-size"], font[size]');
+                if(elStyle) {
+                    const size = window.getComputedStyle(elStyle).fontSize;
+                    const sizeValue = parseInt(size, 10);
+                    return isNaN(sizeValue) ? 21 : sizeValue;
+                }
+
+                return 21;
+            }
+
+            useEffect(() => {
+                if(initialEditNote) {
+                    setTimeout(() => {
+                        if(contentRef.current) {
+                            const size = detectFontSize(initialEditNote.content);
+                            setSelectedSize(size);
+                        }
+                    }, 0);
+                }
+            }, [initialEditNote]);
+        //
     //
 
     //Format
@@ -202,8 +235,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 { name: 'Green', value: 'rgb(67, 188, 56)' },
                 { name: 'Blue', value: 'rgb(26, 118, 197)' },
                 { name: 'Yellow', value: 'rgb(241, 187, 9)' },
-                { name: 'Purple', value: 'rgb(153, 21, 205)' },
-                { name: 'Cyan', value: 'rgb(29, 181, 201)' }
             ];
         //
 
@@ -240,13 +271,21 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         useEffect(() => {
             if(contentRef.current) {
                 const exContent = isEditing ? editNote?.content || '' : newNote.content;
-                if(contentRef.current.innerHTML !== exContent) contentRef.current.innerHTML = exContent;
+                if(contentRef.current.innerHTML !== exContent) {
+                    contentRef.current.innerHTML = exContent;
+
+                    if(isEditing && editNote?.content) {
+                        const size = detectFontSize(editNote.content);
+                        setSelectedSize(size);
+                    }
+                }
             }
         }, [isEditing, editNote?.content, newNote.content]);
 
         const handleTextSelection = useCallback(() => {
             const selection = window.getSelection();
             if(!selection || selection.rangeCount === 0) {
+                setShowToolbar(false);
                 setShowSizePicker(false);
                 setShowFormatPicker(false);
                 setShowColorPicker(false);
@@ -255,6 +294,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
             savedSelectionRef.current = selection.getRangeAt(0);
             const isSelected = !selection.isCollapsed;
+            setShowToolbar(isSelected);
             setShowSizePicker(isSelected);
             setShowFormatPicker(isSelected);
             setShowColorPicker(isSelected);
@@ -347,60 +387,72 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                 </div>
                             </div>
 
-                            <div id="__toolbar">
-                                {/* Size Picker */}
-                                {showSizePicker && (
-                                    <div id="___size-picker">
-                                        <select 
-                                            id="select-size-"
-                                            onChange={(e) => applyTextSize(Number(e.target.value), e as any)}
-                                            value=""
-                                        >
-                                            {sizeOptions.map(size => (
-                                                <option 
-                                                    id="option-size--"
-                                                    key={size}
-                                                    value={size}
-                                                >
-                                                    {size}px
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                )}
-                                {/* Format Picker */}
-                                {showFormatPicker && (
-                                    <div id='___format-picker'>
-                                        {formatOptions.map((opt) => (
-                                            <button
-                                                id={`button-option-${opt.name}-`}
-                                                key={opt.name}
-                                                onClick={(e) => applyTextFormat(opt.command, e)}
-                                                title={opt.title}
-                                                style={opt.style}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                            {/* Toolbar */}
+                            {showToolbar && (
+                                <div id="__toolbar">
+                                    <div id="items">
+                                        <div id="text-custom">
+                                            {/* Size Picker */}
+                                            {showSizePicker && (
+                                                <div id="___size-picker">
+                                                    <select 
+                                                        id="select-size-"
+                                                        onChange={(e) => {
+                                                            const size = Number(e.target.value);
+                                                            setSelectedSize(size);
+                                                            applyTextSize(size, e as any)
+                                                        }}
+                                                        value={selectedSize}
+                                                    >
+                                                        {sizeOptions.map(size => (
+                                                            <option 
+                                                                id="option-size--"
+                                                                key={size}
+                                                                value={size}
+                                                            >
+                                                                {size}px
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
 
-                                {/* Color Picker */}
-                                {showColorPicker && (
-                                    <div id='___color-picker'>
-                                        {colorOptions.map(value => (
-                                            <div
-                                                className="color-option-"
-                                                id={`color-option-${value.value}-`}
-                                                title={value.name}
-                                                key={value.value}
-                                                style={{ backgroundColor: value.value }}
-                                                onClick={(e) => applyTextColor(value.value, e)}
-                                            />
-                                        ))}
+                                            {/* Format Picker */}
+                                            {showFormatPicker && (
+                                                <div id='___format-picker'>
+                                                    {formatOptions.map((opt) => (
+                                                        <button
+                                                            id={`button-option-${opt.name}-`}
+                                                            key={opt.name}
+                                                            onClick={(e) => applyTextFormat(opt.command, e)}
+                                                            title={opt.title}
+                                                            style={opt.style}
+                                                        >
+                                                            {opt.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Color Picker */}
+                                        {showColorPicker && (
+                                            <div id='___color-picker'>
+                                                {colorOptions.map(value => (
+                                                    <div
+                                                        className="color-option-"
+                                                        id={`color-option-${value.value}-`}
+                                                        title={value.name}
+                                                        key={value.value}
+                                                        style={{ backgroundColor: value.value }}
+                                                        onClick={(e) => applyTextColor(value.value, e)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

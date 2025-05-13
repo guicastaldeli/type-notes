@@ -29,34 +29,56 @@
 #__toolbar {
     display: flex;
     width: fit-content;
-    margin: 0;
-    border: 0;
+    justify-content: center;
+    align-items: center;
 
-    /* format picker */
-    #___format-picker {
+    width: 5rem;
+    height: 8rem;
+
+    gap: 2rem;
+
+    background-color: rgb(155, 155, 155);
+
+    #items {
         display: flex;
-        flex-direction: column;
-    
-        /* options */
-        #button-option-bold- {
-            font-weight: bolder;
+        width: fit-content;
+        justify-content: center;
+        align-items: center;
+
+        #text-custom {
+            display: flex;
+            flex-direction: column;
+
+            /* size picker */
+            
+            /* format picker */
+            #___format-picker {
+                display: flex;
+                flex-direction: column;
+            
+                /* options */
+                #button-option-bold- {
+                    font-weight: bolder;
+                }
+            
+                #--button-option-italic- {
+                    font-style: italic;
+                }
+            
+                #--button-option-underline- {
+                    text-decoration: underline;
+                }
+            }
         }
-    
-        #--button-option-italic- {
-            font-style: italic;
-        }
-    
-        #--button-option-underline- {
-            text-decoration: underline;
+        
+        /* color picker */
+        #___color-picker {
+            /* color option */
+            .color-option- {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
         }
     }
-    
-    /* color picker */
-    #___color-picker {
-        /* color option */
-        .color-option- {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-    }
+
 }
