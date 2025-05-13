@@ -128,11 +128,17 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //Size
         //Size Options
             const sizeOptions = Array.from({ length: 56 }, (_, i) => i + 1)
-            .filter(size => size % 7 === 0);
+                .filter(size => size % 7 === 0)
+                .map(size => ({
+                    value: size,
+                    label: `${size}px`,
+                    style: { fontSize: `${size}px` }
+                }));
         //
 
         const applyTextSize = useCallback((size: number, e: React.MouseEvent) => {
             e.preventDefault();
+            console.log('Applying size:', size, 'from options:', sizeOptions);
 
             const savedRange = savedSelectionRef.current;
             if(!savedRange) return;
@@ -145,6 +151,11 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 const execFontSize = Math.min(Math.max(Math.ceil(size / 7), 1), 7);
                 document.execCommand('styleWithCSS', false, 'true');
                 document.execCommand('fontSize', false, execFontSize.toString());
+
+                const selectedNode = selection.focusNode?.parentNode;
+                if(selectedNode && selectedNode.nodeType === Node.ELEMENT_NODE) {
+                    (selectedNode as HTMLElement).style.fontSize = `${size}px`;
+                }
 
                 savedSelectionRef.current = selection.getRangeAt(0);
             }
@@ -160,40 +171,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 }
             }
         }, [editNote, newNote]);
-
-        //Detect Font Size
-            const detectFontSize = (html: string): number => {
-                if(!html || html === '<br>') return 21;
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-
-                const el = Array.from(tempDiv.querySelectorAll('*')).filter(e => {
-                    const style = window.getComputedStyle(e);
-                    return style.fontSize !== 'inherit' && style.fontSize !== 'medium';
-                });
-                
-                if(el.length > 0) {
-                    const lastEl = el[el.length - 1];
-                    const size = window.getComputedStyle(lastEl).fontSize;
-                    const sizeValue = parseInt(size, 10);
-                    return isNaN(sizeValue) ? 21 : sizeValue;
-                }
-
-                return 21;
-            }
-
-            useEffect(() => {
-                if(initialEditNote) {
-                    setTimeout(() => {
-                        if(contentRef.current) {
-                            const size = detectFontSize(initialEditNote.content);
-                            setSelectedSize(size);
-                        }
-                    }, 0);
-                }
-            }, [initialEditNote]);
-        //
     //
 
     //Format
@@ -297,9 +274,14 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 if(contentRef.current.innerHTML !== exContent) {
                     contentRef.current.innerHTML = exContent;
 
-                    if(isEditing && editNote?.content) {
-                        const size = detectFontSize(editNote.content);
-                        setSelectedSize(size);
+                    if(isEditing && contentRef.current.firstChild) {
+                        const firstEl = contentRef.current.querySelector('*');
+
+                        if(firstEl) {
+                            const computedSize = window.getComputedStyle(firstEl).fontSize;
+                            const sizeValue = parseInt(computedSize);
+                            if(!isNaN(sizeValue)) setSelectedSize(sizeValue);
+                        }
                     }
                 }
             }
@@ -425,13 +407,13 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                                         }}
                                                         value={selectedSize}
                                                     >
-                                                        {sizeOptions.map(size => (
+                                                        {sizeOptions.map(option => (
                                                             <option 
                                                                 id="option-size--"
-                                                                key={size}
-                                                                value={size}
+                                                                key={option.value}
+                                                                value={option.value}
                                                             >
-                                                                {size}px
+                                                                {option.label}
                                                             </option>
                                                         ))}
                                                     </select>
