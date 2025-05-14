@@ -28,21 +28,25 @@ function formatDate(dateString: string): string {
 }
 
 export default function NoteComponent({ note, currentSession, onUpdateStatus, onDelete }: NoteComponentProps) {
-    const cleanContent = DOMPurify.sanitize(note.content, {
-        ALLOWED_TAGS: ['span'],
-        ALLOWED_ATTR: ['id', 'style', 'color']
-    });
+    //Content
+        const cleanContent = DOMPurify.sanitize(note.content, {
+            ALLOWED_TAGS: ['span'],
+            ALLOWED_ATTR: ['id', 'style', 'color']
+        });
 
-    const hasColor = () => {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = cleanContent;
-        return tempDiv.querySelector('span[style*="color"], font[color], *[style*="color"]') !== null;
-    }
+        //Colored
+        const hasColor = () => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = cleanContent;
+            return tempDiv.querySelector('span[style*="color"], font[color], *[style*="color"]') !== null;
+        }
 
-    const wrappedContent = hasColor() 
-        ? cleanContent
-        : `<span id="note-content-">${cleanContent}</span>`
-    ;
+        //Without Color
+        const wrappedContent = hasColor() 
+            ? cleanContent
+            : `<span id="note-content-">${cleanContent}</span>`
+        ;
+    //
 
     return (
         <div id="_note-item">
