@@ -30,15 +30,27 @@ function formatDate(dateString: string): string {
 export default function NoteComponent({ note, currentSession, onUpdateStatus, onDelete }: NoteComponentProps) {
     const cleanContent = DOMPurify.sanitize(note.content, {
         ALLOWED_TAGS: ['span'],
-        ALLOWED_ATTR: ['style']
+        ALLOWED_ATTR: ['id', 'style', 'color']
     });
+
+    const hasColor = () => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cleanContent;
+        return tempDiv.querySelector('span[style*="color"], font[color], *[style*="color"]') !== null;
+    }
+
+    const wrappedContent = hasColor() 
+        ? cleanContent
+        : `<span id="note-content-">${cleanContent}</span>`
+    ;
 
     return (
         <div id="_note-item">
             <div id="__note-content">
                 <div 
                     id="___note-content-el"
-                    dangerouslySetInnerHTML={{ __html: cleanContent }} 
+                    style={{ fontSize: `21px` }} 
+                    dangerouslySetInnerHTML={{ __html: wrappedContent }} 
                 />
             </div>
 

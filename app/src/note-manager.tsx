@@ -181,7 +181,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     }
 
     //Size
-        const applyTextSize = useCallback((size: number, e: React.MouseEvent) => {
+        const applyTextSize = useCallback((size: number, e: React.MouseEvent | React.ChangeEvent<HTMLSelectElement>) => {
             e.preventDefault();
 
             const savedRange = savedSelectionRef.current;
@@ -259,6 +259,10 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
             document.execCommand('styleWithCSS', false, 'true');
             document.execCommand('foreColor', false, value);
+
+            const spans = contentRef.current?.querySelectorAll('span[style*=color]');
+            const spanId = `note-content-wc-${value}`;
+            spans?.forEach(s => s.id = spanId);
 
             if(contentRef.current) {
                 const newContent = contentRef.current.innerHTML;
@@ -363,7 +367,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 {notes.map((note) => (
                     <div 
                         id="_note"
-                        key={note.id} 
+                        key={note.id}
                         onClick={() => {
                                 if(onNoteClick)
                                 onNoteClick(note) 
@@ -424,7 +428,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                                         onChange={(e) => {
                                                             const size = Number(e.target.value);
                                                             setSelectedSize(size);
-                                                            applyTextSize(size, e as any)
+                                                            applyTextSize(size, e);
                                                         }}
                                                         value={selectedSize}
                                                     >
