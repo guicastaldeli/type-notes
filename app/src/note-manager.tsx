@@ -54,7 +54,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
     //Load Options
         interface SizeOption { 
-            value: number; 
+            value: string; 
             name: string;
             label: string; 
             style: React.CSSProperties 
@@ -102,7 +102,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                     colorOptions: colors
                 });
             }
-
+            
             loadOptions().catch(console.error);
         }, []);
     //
@@ -279,7 +279,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             const lines = content.split(/\r?\n/);
             if(lines.length === 0) return content;
 
-            const size = textOptions.sizeOptions.find(s => s.value === sizeValue)?.style;
+            const size = textOptions.sizeOptions.find(s => s.value === sizeValue.toString())?.style;
             const format = textOptions.sizeOptions.find(f => f.name === formatValue)?.style;
             const styleString = Object.entries({ ...size, ...format }).map(([key, value]) => `${key}:${value}`).join(';');
             lines[0] = `<span style="${styleString}">${lines[0]}</span>`;
@@ -444,17 +444,18 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                             {/* Format Picker */}
                                             {showFormatPicker && (
                                                 <div id='___format-picker'>
-                                                    {textOptions.formatOptions.map((opt) => (
+                                                    {textOptions.formatOptions.map((option) => (
                                                         <button
-                                                            id={`button-option-${opt.name}-`}
-                                                            key={opt.name}
-                                                            onClick={(e) => applyTextFormat(opt.command, e)}
-                                                            title={opt.title}
-                                                            //style={opt.style}
+                                                            id={`button-option-${option.name}-`}
+                                                            key={option.name}
+                                                            onClick={(e) => applyTextFormat(option.command, e)}
+                                                            title={option.title}
+                                                            style={option.style}
                                                         >
-                                                            {opt.label}
+                                                            {option.label}
                                                         </button>
-                                                    ))}
+                                                        )
+                                                    )}
                                                 </div>
                                             )}
                                         </div>

@@ -158,11 +158,13 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
 //Options
     interface TextOption {
         id?: number;
-        type: number;
+        type: string;
         name: string;
         value: string;
         label?: string;
-        style?: Record<string, string> | string;
+        title?: string;
+        command?: string;
+        style?: Record<string, string | undefined> | string;
         sort_order?: number;
     }
 
@@ -174,17 +176,19 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
 
             while(stmt.step()) {
                 const option = stmt.getAsObject() as unknown as TextOption;
-                //option.style = {};
                 
-                if(typeof option.style === 'string' && option.style) {
+                if(option.style && typeof option.style === 'string') {
                     try {
-                        option.style = JSON.parse(option.style);
-                    } catch(e) {
-                        console.error(e);
-                        option.style = {};
+                        let parsed = JSON.parse(option.style);
+
+                        while(typeof parsed === 'string') {
+                            parsed = JSON.parse(parsed);
+                        }
+
+                        option.style = parsed;
+                    } catch {
+                        option.style = {}
                     }
-                } else {
-                    option.style = {}
                 }
 
                 options.push(option);
@@ -195,18 +199,48 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         });
     }
 
-    export async function addTextOptions(option: { type: string; name: string; value: string; label?: string; style?: string; sort_order?: number }): Promise<void> {
+    export async function addTextOptions(option: { 
+        type: string; 
+        name: string; 
+        value: string; 
+        label?: string; 
+        style?: Record<string, string | undefined> | string; 
+        sort_order?: number 
+    }): Promise<void> {
         return initDB(db => {
-            const styleString = option.style ? JSON.stringify(option.style) : null;
-            db.run('INSERT INTO text_options (type, name, value, label, style, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
+            const styleSave = option.style && typeof option.style === 'object'
+                ? Object.fromEntries(
+                    Object.entries(option.style).filter(([_, value]) => value !== undefined)
+                )
+                : option.style
+            ;
+
+            const styleString = option.style ?
+                typeof styleSave === 'string'
+                    ? styleSave
+                    : JSON.stringify(styleSave)
+                : ''
+            ;
+
+            db.run(`
+                INSERT INTO text_options (
+                    type, 
+                    name, 
+                    value, 
+                    label, 
+                    style, 
+                    sort_order
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `,
             [
                 option.type, 
                 option.name, 
                 option.value, 
                 option.label || option.name, 
-                styleString || '', 
+                styleString, 
                 option.sort_order || 0
-            ])
+            ]);
         });
     }
 
@@ -287,7 +321,7 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
                 const colors = [
                     { type: 'color', name: 'Black', value: 'rgb(0, 0, 0)', sort_order: 0 },
                     { type: 'color', name: 'Red', value: 'rgb(179, 23, 23)',  sort_order: 1 },
-                    { type: 'color', name: 'Green', value: 'rgb(67, 188, 56)',  sort_order: 2 },
+                    { type: 'color', name: 'Green', value: 'rgb(36, 148, 26)',  sort_order: 2 },
                     { type: 'color', name: 'Blue', value: 'rgb(26, 74, 197)',  sort_order: 3 },
                     { type: 'color', name: 'Yellow', value: 'rgb(241, 187, 9)',  sort_order: 4 },
                 ];
