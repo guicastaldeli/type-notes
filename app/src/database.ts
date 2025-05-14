@@ -40,6 +40,18 @@ export async function setDB(): Promise<Database> {
             key TEXT PRIMARY KEY,
             value TEXT
         );
+
+        CREATE TABLE IF NOT EXISTS text_options(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,
+            name TEXT NOT NULL,
+            value TEXT NOT NULL,
+            label TEXT,
+            style TEXT,
+            sort_order INTEGER DEFAULT 0
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_text_options_type ON text_options(type);
     `);
 
     return dbInstance;
@@ -140,5 +152,158 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         return initDB(db => {
             db.run("DELETE FROM notes WHERE id = ?", [id]);
         })
+    }
+//
+
+//Options
+    interface TextOption {
+        id?: number;
+        type: number;
+        name: string;
+        value: string;
+        label?: string;
+        style?: Record<string, string> | string;
+        sort_order?: number;
+    }
+
+    export async function getTextOptions(type: string): Promise<any[]> {
+        return initDB(db => {
+            const stmt = db.prepare('SELECT * FROM text_options WHERE type = ? ORDER BY sort_order ASC');
+            stmt.bind([type]);
+            const options: TextOption[] = [];
+
+            while(stmt.step()) {
+                const option = stmt.getAsObject() as unknown as TextOption;
+                //option.style = {};
+                
+                if(typeof option.style === 'string' && option.style) {
+                    try {
+                        option.style = JSON.parse(option.style);
+                    } catch(e) {
+                        console.error(e);
+                        option.style = {};
+                    }
+                } else {
+                    option.style = {}
+                }
+
+                options.push(option);
+            }
+
+            stmt.free();
+            return options;
+        });
+    }
+
+    export async function addTextOptions(option: { type: string; name: string; value: string; label?: string; style?: string; sort_order?: number }): Promise<void> {
+        return initDB(db => {
+            const styleString = option.style ? JSON.stringify(option.style) : null;
+            db.run('INSERT INTO text_options (type, name, value, label, style, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
+            [
+                option.type, 
+                option.name, 
+                option.value, 
+                option.label || option.name, 
+                styleString || '', 
+                option.sort_order || 0
+            ])
+        });
+    }
+
+    //Options
+        //Size
+        async function _setSizeOptions(db: Database): Promise<void> {
+            const sizeOptions = await getTextOptions('size');
+            if(sizeOptions.length > 0) return;
+
+            if(sizeOptions.length === 0) {
+                const sizes = Array.from({ length: 56 }, (_, i) => i + 1)
+                    .filter(size => size % 7 === 0)
+                    .map((size, i) => ({
+                        type: 'size',
+                        name: `${size}px`,
+                        value: size.toString(),
+                        label: `${size}px`,
+                        sort_order: i
+                    }
+                ));
+
+                for(const size of sizes) await addTextOptions(size);
+            }
+        }
+
+        //Format
+        async function _setFormatOptions(db: Database): Promise<void> {
+            const formatOptions = await getTextOptions('format');
+
+            if(formatOptions.length === 0) {
+                const formats = [
+                    {
+                        type: 'format',
+                        name: 'bold',
+                        value: 'bold',
+                        title: 'Bold',
+                        command: 'bold',
+                        label: 'B',
+                        style: { fontWeight: 'bold' },
+                        sort_order: 0
+                    },
+                    {
+                        type: 'format',
+                        name: 'italic',
+                        value: 'italic',
+                        title: 'Italic',
+                        command: 'italic',
+                        label: 'I',
+                        style: { fontStyle: 'italic' },
+                        sort_order: 1
+                    },
+                    {
+                        type: 'format',
+                        name: 'underline',
+                        value: 'underline',
+                        title: 'Underline',
+                        command: 'underline',
+                        label: 'U',
+                        style: { textDecoration: 'underline' },
+                        sort_order: 2
+                    }
+                ];
+
+                for(const format of formats) {
+                    await addTextOptions({
+                        ...format,
+                        style: JSON.stringify(format.style)
+                    });
+                }
+            }
+        }
+
+        //Color
+        async function _setColorOptions(db: Database): Promise<void> {
+            const colorOptions = await getTextOptions('color');
+
+            if(colorOptions.length === 0) {
+                const colors = [
+                    { type: 'color', name: 'Black', value: 'rgb(0, 0, 0)', sort_order: 0 },
+                    { type: 'color', name: 'Red', value: 'rgb(179, 23, 23)',  sort_order: 1 },
+                    { type: 'color', name: 'Green', value: 'rgb(67, 188, 56)',  sort_order: 2 },
+                    { type: 'color', name: 'Blue', value: 'rgb(26, 74, 197)',  sort_order: 3 },
+                    { type: 'color', name: 'Yellow', value: 'rgb(241, 187, 9)',  sort_order: 4 },
+                ];
+
+                for(const color of colors) await addTextOptions(color);
+            }
+        }
+    //
+
+    export async function initTextOptions(): Promise<void> {
+        return initDB(async db => {
+            await Promise.all([
+                _setSizeOptions(db),
+                _setFormatOptions(db),
+                _setColorOptions(db)
+            ]);
+        });
     }
 //

@@ -8,8 +8,8 @@
 .note-manager #---note-creator #_note-main #__note-container {
   border: 0.1rem solid black;
 }
-.note-manager #---note-creator #_note-main #__note-container #___note-content-container #note-content- span {
-  font-size: 21px;
+.note-manager #---note-creator #_note-main #__note-container #___note-content-container #note-content- {
+  font-family: 21px;
 }
 
 /* toolbar */
@@ -35,6 +35,7 @@
 #__toolbar #items #text-custom {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   /* size picker */
   /* format picker */
 }

@@ -12,8 +12,8 @@
                 border: 0.1rem solid black;
 
                 #___note-content-container {
-                    #note-content- span {
-                        font-size: 21px;
+                    #note-content- {
+                        font-family: 21px;
                     }
                 }
             }
@@ -44,6 +44,8 @@
         #text-custom {
             display: flex;
             flex-direction: column;
+
+            gap: 2rem;
 
             /* size picker */
             

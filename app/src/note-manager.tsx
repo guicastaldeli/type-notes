@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-import { getNotes, _addNote, _updateNoteStatus, _updateNote, _deleteNote } from "./database";
+import { getNotes, _addNote, _updateNoteStatus, _updateNote, _deleteNote, initTextOptions, getTextOptions } from "./database";
 import { NoteProps } from "./note-component";
 import NoteComponent from "./note-component";
 
@@ -26,7 +26,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
     const [showToolbar, setShowToolbar] = useState(false);
     const [showSizePicker, setShowSizePicker] = useState(false);
-    const [selectedSize, setSelectedSize] = useState<number>();
+    const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -50,6 +50,61 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         useEffect(() => {
             if(initialEditNote) setEditNote(initialEditNote);
         }, [initialEditNote]);
+    //
+
+    //Load Options
+        interface SizeOption { 
+            value: number; 
+            name: string;
+            label: string; 
+            style: React.CSSProperties 
+        }
+
+        interface FormatOption { 
+            name: string; 
+            value: string; 
+            title: string; 
+            command: string; 
+            label: string; 
+            style: React.CSSProperties; 
+        }
+
+        interface ColorOption { 
+            name: string;  
+            value: string 
+        }
+
+        interface TextOption { 
+            sizeOptions: SizeOption[]; 
+            formatOptions: FormatOption[]; 
+            colorOptions: ColorOption[]; 
+        }
+
+        const [textOptions, setTextOptions] = useState<TextOption>({
+            sizeOptions: [],
+            formatOptions: [],
+            colorOptions: []
+        });
+
+        useEffect(() => {
+            const loadOptions = async () => {
+                await initTextOptions();
+
+                const [sizes, formats, colors] = await Promise.all([
+                    getTextOptions('size'),
+                    getTextOptions('format'),
+                    getTextOptions('color')
+                ]);
+
+                setTextOptions({
+                    sizeOptions: sizes,
+                    formatOptions: formats,
+                    colorOptions: colors
+                });
+            }
+
+            loadOptions().catch(console.error);
+        }, []);
     //
 
     //Add Note
@@ -126,19 +181,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     }
 
     //Size
-        //Size Options
-            const sizeOptions = Array.from({ length: 56 }, (_, i) => i + 1)
-                .filter(size => size % 7 === 0)
-                .map(size => ({
-                    value: size,
-                    label: `${size}px`,
-                    style: { fontSize: `${size}px` }
-                }));
-        //
-
         const applyTextSize = useCallback((size: number, e: React.MouseEvent) => {
             e.preventDefault();
-            console.log('Applying size:', size, 'from options:', sizeOptions);
 
             const savedRange = savedSelectionRef.current;
             if(!savedRange) return;
@@ -174,32 +218,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //
 
     //Format
-        //Format Options
-            const formatOptions = [
-                {
-                    name: 'bold',
-                    title: 'Bold',
-                    command: 'bold',
-                    label: 'B',
-                    style: { fontWeight: 'bold' }
-                },
-                {
-                    name: 'italic',
-                    title: 'Italic',
-                    command: 'italic',
-                    label: 'I',
-                    style: { fontStyle: 'italic' }
-                },
-                {
-                    name: 'underline',
-                    title: 'Underline',
-                    command: 'underline',
-                    label: 'U',
-                    style: { textDecoration: 'underline' }
-                }
-            ];
-        //
-
         const applyTextFormat = useCallback((command: string, e: React.MouseEvent) => {
             e.preventDefault();
 
@@ -227,16 +245,6 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
     //
     
     //Color
-        //Color Options
-            const colorOptions = [
-                { name: 'Black', value: 'rgb(0, 0, 0)' },
-                { name: 'Red', value: 'rgb(189, 33, 33)' },
-                { name: 'Green', value: 'rgb(67, 188, 56)' },
-                { name: 'Blue', value: 'rgb(26, 118, 197)' },
-                { name: 'Yellow', value: 'rgb(241, 187, 9)' },
-            ];
-        //
-
         const applyTextColor = useCallback((value: string, e: React.MouseEvent) => {
             e.preventDefault();
             
@@ -264,6 +272,19 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
 
             setShowColorPicker(false);
         }, [editNote, newNote]);
+    //
+
+    //Title Line
+        function formatLine(content: string, sizeValue: number, formatValue: string): string {
+            const lines = content.split(/\r?\n/);
+            if(lines.length === 0) return content;
+
+            const size = textOptions.sizeOptions.find(s => s.value === sizeValue)?.style;
+            const format = textOptions.sizeOptions.find(f => f.name === formatValue)?.style;
+            const styleString = Object.entries({ ...size, ...format }).map(([key, value]) => `${key}:${value}`).join(';');
+            lines[0] = `<span style="${styleString}">${lines[0]}</span>`;
+            return lines.join('\n');
+        }
     //
 
     //Content
@@ -407,7 +428,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                                         }}
                                                         value={selectedSize}
                                                     >
-                                                        {sizeOptions.map(option => (
+                                                        {textOptions.sizeOptions.map(option => (
                                                             <option 
                                                                 id="option-size--"
                                                                 key={option.value}
@@ -423,13 +444,13 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                             {/* Format Picker */}
                                             {showFormatPicker && (
                                                 <div id='___format-picker'>
-                                                    {formatOptions.map((opt) => (
+                                                    {textOptions.formatOptions.map((opt) => (
                                                         <button
                                                             id={`button-option-${opt.name}-`}
                                                             key={opt.name}
                                                             onClick={(e) => applyTextFormat(opt.command, e)}
                                                             title={opt.title}
-                                                            style={opt.style}
+                                                            //style={opt.style}
                                                         >
                                                             {opt.label}
                                                         </button>
@@ -441,7 +462,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                                         {/* Color Picker */}
                                         {showColorPicker && (
                                             <div id='___color-picker'>
-                                                {colorOptions.map(value => (
+                                                {textOptions.colorOptions.map(value => (
                                                     <div
                                                         className="color-option-"
                                                         id={`color-option-${value.value}-`}
