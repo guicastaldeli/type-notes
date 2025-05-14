@@ -3,8 +3,19 @@
 @import url('./notes/styles.scss');
 /* ~~~~~~~~~~~~ */
 
+/* ~~~~~~~~~~~~ */
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('../assets/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+    font-style: normal;
+}
+
+$glFont: 'SF Pro Display';
+
+/* ~~~~~~~~~~~~ */
+
 html, body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: $glFont;
 }
 
 html, body, #root {

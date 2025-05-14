@@ -1,10 +1,15 @@
-#_note {
+/* list */
+.notes-list #_note {
   /* hover */
 }
-#_note:hover {
+.notes-list #_note:hover {
   background-color: rgba(0, 0, 0, 0.309);
 }
+.notes-list #_note #_note-item #__note-content #___note-content-el #note-content- div {
+  color: rgb(107, 107, 107);
+}
 
+/* manager */
 .note-manager #---note-creator #_note-main #__note-container {
   border: 0.1rem solid black;
 }

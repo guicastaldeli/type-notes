@@ -340,7 +340,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             }
 
             const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-                if(e.key === ' ') {
+                if(e.key === '') {
                     e.preventDefault();
                     insertLine();
                 }

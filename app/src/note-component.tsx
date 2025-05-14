@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DOMPurify from "dompurify";
 
 type NoteStatus = 'default' | 'archived' | 'deleted';
@@ -28,32 +28,79 @@ function formatDate(dateString: string): string {
 }
 
 export default function NoteComponent({ note, currentSession, onUpdateStatus, onDelete }: NoteComponentProps) {
-    //Content
-        const cleanContent = DOMPurify.sanitize(note.content, {
-            ALLOWED_TAGS: ['span'],
-            ALLOWED_ATTR: ['id', 'style', 'color']
-        });
+    const truncateContent = (node: Node, maxLength: number): number => {
+        let remLength = maxLength;
 
-        //Colored
-        const hasColor = () => {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = cleanContent;
-            return tempDiv.querySelector('span[style*="color"], font[color], *[style*="color"]') !== null;
+        for(const childNode of Array.from(node.childNodes)) {
+            if(remLength <= 0) {
+                node.removeChild(childNode);
+                continue;
+            }
+
+            if(childNode.nodeType === Node.TEXT_NODE) {
+                const textNode = childNode as Text;
+
+                if(textNode.data.length > remLength) {
+                    textNode.data = textNode.data.substring(0, remLength) + '...';
+                    remLength = 0;
+                } else {
+                    remLength -= textNode.data.length;
+                }
+            } else if(childNode.nodeType === Node.ELEMENT_NODE) {
+                remLength = truncateContent(childNode, remLength);
+            }
         }
 
-        //Without Color
-        const wrappedContent = hasColor() 
-            ? cleanContent
-            : `<span id="note-content-">${cleanContent}</span>`
-        ;
-    //
+        return remLength;
+    }
+
+    const processContent = (content: string) => {
+        //Clear Content
+        const clearContent = DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: ['span', 'div'],
+            ALLOWED_ATTR: ['id', 'style', 'color'],
+        });
+        
+        //Div
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = clearContent;
+            
+            const divs = tempDiv.querySelectorAll('div');
+            divs.forEach(d => { truncateContent(d, 5)});
+            
+            if(divs.length > 1) {
+                const divArray = Array.from(divs);
+                for(let i = 1; i < divArray.length; i++) {
+                    divs[i].remove();
+                }
+            }
+
+            //Root
+            Array.from(tempDiv.childNodes).forEach(c => {
+                if(c.nodeType === Node.TEXT_NODE) {
+                    const textNode = c as Text;
+                    if(textNode.data.length > 5) textNode.data = textNode.data.substring(0, 5) + '...';
+                }
+            });
+        //
+    
+        //Colored
+            const hasColor = tempDiv.querySelectorAll('span[style*="color"], font[color], *[style*="color"]');
+            hasColor.forEach(el => { truncateContent(el, 5) });
+        //
+
+        const processedHtml = tempDiv.innerHTML;
+        return hasColor ? processedHtml : `<span id="note-content-">${processedHtml}</span>`;
+    }
+
+    const wrappedContent = processContent(note.content);
 
     return (
         <div id="_note-item">
             <div id="__note-content">
                 <div 
                     id="___note-content-el"
-                    style={{ fontSize: `21px` }} 
+                    style={{ fontSize: '21px' }} 
                     dangerouslySetInnerHTML={{ __html: wrappedContent }} 
                 />
             </div>
