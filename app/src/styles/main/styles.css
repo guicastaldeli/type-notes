@@ -37,8 +37,33 @@
   /* info */
 }
 .main #-global-container #--bar {
-  width: 6%;
+  width: 8%;
   border-right: 0.1rem solid black;
+}
+.main #-global-container #--bar #---session-manager {
+  height: 100%;
+}
+.main #-global-container #--bar #---session-manager #_s-content {
+  height: 100%;
+}
+.main #-global-container #--bar #---session-manager #_s-content #__s-content-container {
+  width: 100%;
+  /* buttons */
+  /* */
+}
+.main #-global-container #--bar #---session-manager #_s-content #__s-content-container button {
+  width: 100%;
+  border: 0.1rem solid;
+}
+.main #-global-container #--bar #---session-manager #_s-content #__s-content-container .current {
+  background-color: rgb(0, 0, 0);
+  border: 0.1rem solid rgb(0, 153, 255);
+  color: rgb(255, 255, 255);
+}
+.main #-global-container #--bar #---session-manager #_s-content #__s-content-container .inactive {
+  background-color: rgb(255, 255, 255);
+  border: 0.1rem solid rgb(14, 187, 37);
+  color: rgb(0, 0, 0);
 }
 .main #-global-container #--notes-container {
   width: 20%;

@@ -2,25 +2,40 @@ import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-import { getNotes, _addNote, _updateNoteStatus, _updateNote, _deleteNote, initTextOptions, getTextOptions } from "./database";
+import { getNotes, _updateNote, _addNote, initTextOptions, getTextOptions } from "./database";
 import { NoteProps } from "./note-component";
+import { Session } from "./session-manager";
+import SessionManager from "./session-manager";
 import NoteComponent from "./note-component";
 
 //Props
-    export type Session = 'default' | 'archived' | 'deleted';
-
     interface NoteManagerProps {
         isCreating: boolean;
         showNotes?: boolean;
         currentSession: Session;
+        notes: NoteProps[];
         onComplete: () => void;
         onCancel: () => void;
         onNoteClick?: (note: NoteProps) => void;
+        onNotesUpdated?: () => void;
         editingNote?: NoteProps | null;
+        onUpdateStatus?: (id: number, status: Session) => Promise<void>;
+        onDeleteNote?: (id: number) => Promise<void>;
     }
 //
 
-export default function NoteManager({ isCreating, showNotes = false, currentSession, onComplete, onCancel, onNoteClick, editingNote: initialEditNote }: NoteManagerProps) {
+export default function NoteManager({ 
+    isCreating, 
+    showNotes = false, 
+    currentSession, 
+    onComplete, 
+    onCancel, 
+    onNoteClick,
+    onNotesUpdated,
+    editingNote: initialEditNote,
+    onUpdateStatus, 
+    onDeleteNote 
+    }: NoteManagerProps) {
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
@@ -39,7 +54,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                 const loadedNotes = await getNotes(currentSession);
                 setNotes(loadedNotes);
             } catch(e) {
-                console.error(e); 
+                console.error(e);
+                setNotes([]);
             }
         }, [currentSession]);
 
@@ -120,6 +136,7 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
             setNewNote({ title: '', content: '' });
             await loadNotes();
             onComplete();
+            if(onNotesUpdated) onNotesUpdated();
         } catch(e) {
             console.error(e);
         }
@@ -138,43 +155,27 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
         const isEmpty = !currentContent.trim() || currentContent.replace(/<br\s*\/?>/gi, '').trim() === '';
 
         if(isEmpty) {
-            if(editNote.id) await deleteNote(editNote.id);
-            setEditNote(null);
-            onComplete();
-            return;
+            if(editNote.id) {
+                try {
+                    if(onDeleteNote) await onDeleteNote(editNote.id);
+                    setEditNote(null);
+                    onComplete();
+                    return;
+                } catch(e) {
+                    console.error(e);
+                }
+            }
         }
 
         try {
             const clearContent = DOMPurify.sanitize(currentContent);
             await _updateNote(editNote.id, clearContent);
+
+            if(editNote.status !== currentContent && onUpdateStatus) await onUpdateStatus(editNote.id, currentSession);
             setEditNote(null);
-            await loadNotes();
             onComplete();
-        } catch(e) {
-            console.error(e);
-        }
-    }
-
-    //Update Status
-    const updNoteStatus = async(id: number, updStatus: Session) => {
-        try {
-            await _updateNoteStatus(id, updStatus);
-            await loadNotes();
-        } catch(e) {
-            console.error(e);
-        }
-    }
-
-    //Delete Note
-    const deleteNote = async(id: number) => {
-        try {
-            if(editNote?.id === id) {
-                setEditNote(null);
-                onComplete();
-            }
             
-            await _deleteNote(id);
-            await loadNotes();
+            if(onNotesUpdated) onNotesUpdated();
         } catch(e) {
             console.error(e);
         }
@@ -377,8 +378,8 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                             key={`note-${note.id}`}
                             note={note}
                             currentSession={currentSession}
-                            onUpdateStatus={updNoteStatus}
-                            onDelete={deleteNote}
+                            onUpdateStatus={onUpdateStatus || (() => Promise.resolve())}
+                            onDelete={onDeleteNote || (() => Promise.resolve())}
                         />
                     </div>
                 ))}
@@ -396,7 +397,12 @@ export default function NoteManager({ isCreating, showNotes = false, currentSess
                     <div id="---note-creator">
                         <div id="_note-actions">
                             <div id="__note-save-container">
-                                <button onClick={saveHandler}>{currentSession == 'default' ? 'Home' : ''}</button>
+                                <button onClick={saveHandler}>
+                                    {
+                                        currentSession == 'default' 
+                                        ? 'Home' : ''
+                                    }
+                                </button>
                             </div>
                         </div>
         

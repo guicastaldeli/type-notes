@@ -50,9 +50,40 @@
 
             /* bar */
             #--bar {
-                width: 6%;
+                width: 8%;
 
                 border-right: 0.1rem solid black;
+
+                #---session-manager {
+                    height: 100%;
+
+                    #_s-content {
+                        height: 100%;
+
+                        #__s-content-container {
+                            width: 100%;
+
+                            button {
+                                width: 100%;
+                                border: 0.1rem solid;
+                            }
+
+                            /* buttons */
+                                .current {
+                                    background-color: rgb(0, 0, 0);
+                                    border: 0.1rem solid rgb(0, 153, 255);
+                                    color: rgb(255, 255, 255);
+                                }
+            
+                                .inactive {
+                                    background-color: rgb(255, 255, 255);
+                                    border: 0.1rem solid rgb(14, 187, 37);
+                                    color: rgb(0, 0, 0);
+                                }
+                            /* */
+                        }
+                    }
+                }
             }
 
             /* notes container */

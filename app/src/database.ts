@@ -341,3 +341,14 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         });
     }
 //
+
+//LOG ~~~~if needed
+    async function __checkLog() {
+        const db = await setDB();
+        const res = db.exec('SELECT COUNT(*) as count FROM notes');
+        const count = res[0].values[0][0];
+        console.log(count);
+    }
+
+    //__checkLog();
+//
