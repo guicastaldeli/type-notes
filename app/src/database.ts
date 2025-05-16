@@ -342,6 +342,45 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
     }
 //
 
+//Search Notes
+export async function searchNotes(searchTerm: string, status?: string): Promise<any[]> {
+    try {
+        if(!dbInstance) await setDB();
+        if(!dbInstance) throw new Error('Database instance is not avaliable');
+        
+        const term = `%${searchTerm}%`;
+    
+        const query = status
+            ? `SELECT * FROM notes 
+                WHERE (content LIKE ? OR created_at LIKE ?) 
+                AND status = ?`
+            : `SELECT * FROM notes 
+                WHERE content LIKE ? OR created_at LIKE ?`
+            ;
+        ;
+    
+        const params = status ? [term, term, status] : [term, term];
+        const stmt = dbInstance.prepare(query);
+        stmt.bind(params);
+    
+        const notes = [];
+    
+        while(stmt.step()) {
+            const note = stmt.getAsObject();
+            note.createdAt = convertDate(note.created_at?.toString());
+            note.updatedAt = convertDate(note.updated_at?.toString());
+    
+            notes.push(note);
+        }
+    
+        stmt.free();
+        return notes;
+    } catch(e) {
+        console.log(e);
+        return [];
+    }
+}
+
 //LOG ~~~~if needed
     async function __checkLog() {
         const db = await setDB();

@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react';
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { useEffect, useState, useCallback  } from 'react';
 
 import { NoteProps } from './note-component';
+import { Session } from './session-manager';
+import { _deleteNote, _updateNoteStatus, getNotes } from './database';
 import Message from './helloworld';
 import SessionManager from './session-manager';
-import { Session } from './session-manager';
 import GlobalHeader from './global-header';
 import NoteManager from './note-manager';
-import { _deleteNote, _updateNoteStatus, getNotes } from './database';
 
 import './styles/main/styles.scss';
 
@@ -15,6 +15,7 @@ export default function Main() {
   const [isCreating, setIsCreating] = useState(false);
   const [editNote, setEditNote] = useState<NoteProps | null>(null);
   const [currentSession, setCurrentSession] = useState<Session>('default');
+  const [filteredNotes, setFilteredNotes] = useState<NoteProps[] | null>(null);
   const [notes, setNotes] = useState<NoteProps[]>([]);
 
   //Load Notes
@@ -82,9 +83,26 @@ export default function Main() {
     setIsCreating(false);
   }
 
+  //Search
+    const handleSearch = (filteredNotes: NoteProps[]) => {
+      setFilteredNotes(filteredNotes);
+
+      if(filteredNotes.length === 0) return 'No results';
+    }
+
+    const handleClearSearch = () => {
+      setFilteredNotes(null);
+    }
+  //
+
   return (
     <div className='main'>
-      <GlobalHeader />
+      <GlobalHeader
+        notes={notes}
+        currentSession={currentSession}
+        onSearch={handleSearch}
+        onClearSearch={handleClearSearch} 
+      />
 
       <div id="-global-container">
         {/* Bar */}
@@ -109,7 +127,7 @@ export default function Main() {
               isCreating={false}
               showNotes={true}
               currentSession={currentSession}
-              notes={notes}
+              notes={filteredNotes || notes}
               onComplete={noteCreated}
               onCancel={() => setIsCreating(false)}
               onNoteClick={handleNoteClick}

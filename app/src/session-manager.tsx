@@ -43,7 +43,7 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
         <div id='---session-manager'>
             <div id='_s-content'>
                 {sessions.map((s) => (
-                    <div id='__s-content-container'>
+                    <div key={s.id} id='__s-content-container'>
                         <button
                             key={s.id}
                             id={`___button-session-${s.id}${currentSession === s.id ? '-current' : '-inactive'}`}

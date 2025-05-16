@@ -27,7 +27,7 @@ export default function Message() {
         try {
             setShowMessage(false);
             await initDB(db => {
-                setSettings(db, 'has-viewed', 'true')
+                setSettings(db, 'has-viewed', 'true');
                 saveDB(db);
             });
             localStorage.setItem('has-viewed', 'true');

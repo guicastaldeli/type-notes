@@ -1,6 +1,18 @@
+import React from 'react';
+import { NoteProps } from './note-component';
+import { Session } from './session-manager';
+import SearchManager from './search-manager';
+
 import './styles/main/styles.scss';
 
-export default function GlobalHeader() {
+interface GlobalHeaderProps {
+    notes: NoteProps[];
+    currentSession: Session;
+    onSearch: (filteredNotes: NoteProps[]) => void;
+    onClearSearch: () => void;
+}
+
+export default function GlobalHeader({ notes, currentSession, onSearch, onClearSearch }: GlobalHeaderProps) {
     return (
         <div id="-global-header">
             <div id="--header-content">
@@ -13,9 +25,15 @@ export default function GlobalHeader() {
 
                 {/* Search Bar */}
                 <div id="---search-bar-container">
-                    <div id="_search-bar-content">
-                        <p>search</p>
-                        {/* create searchbartsx later... */}
+                    <div id="_search-bar-content-container">
+                        <div id="__search-bar-content">
+                            <SearchManager
+                                notes={notes}
+                                currentSession={currentSession}
+                                onSearch={onSearch}
+                                onClearSearch={onClearSearch}
+                            />
+                        </div>
                     </div>
                 </div>
 
