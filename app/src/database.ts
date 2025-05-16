@@ -345,22 +345,22 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
 //Search Notes
 export async function searchNotes(searchTerm: string, status?: string): Promise<any[]> {
     try {
-        if(!dbInstance) await setDB();
-        if(!dbInstance) throw new Error('Database instance is not avaliable');
+        const db = await setDB();
+        if(!db) throw new Error('Databse error');
         
         const term = `%${searchTerm}%`;
     
         const query = status
             ? `SELECT * FROM notes 
-                WHERE (content LIKE ? OR created_at LIKE ?) 
+                WHERE (content LIKE ? COLLATE NOCASE) 
                 AND status = ?`
             : `SELECT * FROM notes 
-                WHERE content LIKE ? OR created_at LIKE ?`
+                WHERE content LIKE ? COLLATE NOCASE`
             ;
         ;
     
-        const params = status ? [term, term, status] : [term, term];
-        const stmt = dbInstance.prepare(query);
+        const params = status ? [term, status] : [term];
+        const stmt = db.prepare(query);
         stmt.bind(params);
     
         const notes = [];

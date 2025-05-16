@@ -25,6 +25,20 @@
 #--notes-container #---notes-content .notes-list #_note #_note-item #__note-content #___note-content-el #note-content- div {
   color: rgb(107, 107, 107);
 }
+#--notes-container #---notes-content .notes-list #_empty-note-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+#--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content #___empty-note {
+  width: 100%;
+}
 
 /* manager */
 .note-manager #---note-creator #_note-main #__note-container {

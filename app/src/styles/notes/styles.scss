@@ -37,6 +37,24 @@
                     }
                 }
             }
+
+            #_empty-note-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                height: 100%;
+
+                #__empty-note-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    
+                    #___empty-note {
+                        width: 100%;
+                    }
+                }
+            }
         }
     }
 }

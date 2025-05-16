@@ -15,15 +15,18 @@ export default function Main() {
   const [isCreating, setIsCreating] = useState(false);
   const [editNote, setEditNote] = useState<NoteProps | null>(null);
   const [currentSession, setCurrentSession] = useState<Session>('default');
-  const [filteredNotes, setFilteredNotes] = useState<NoteProps[] | null>(null);
+  const [filteredNotes, setFilteredNotes] = useState<NoteProps[]>([]);
   const [notes, setNotes] = useState<NoteProps[]>([]);
+  const [searchActive, setSearchActive] = useState(false);
 
   //Load Notes
     useEffect(() => {
       loadNotes();
     }, [currentSession]);
 
-    const loadNotes = useCallback(async () => {
+    const loadNotes = useCallback(async (searchTerm?: string) => {
+      if(searchActive) return;
+      
       try {
         const loadedNotes = await getNotes(currentSession);
         setNotes(loadedNotes);
@@ -31,7 +34,7 @@ export default function Main() {
         console.error(e);
         setNotes([]);
       }
-    }, [currentSession]);
+    }, [currentSession, searchActive]);
 
     const handleUpdateStatus = async(id: number, status: Session) => {
       try {
@@ -57,6 +60,7 @@ export default function Main() {
       setCurrentSession(session);
       setIsCreating(false);
       setEditNote(null);
+      handleClearSearch();
       await loadNotes();
     }
 
@@ -84,15 +88,15 @@ export default function Main() {
   }
 
   //Search
-    const handleSearch = (filteredNotes: NoteProps[]) => {
+    const handleSearch = useCallback((filteredNotes: NoteProps[]) => {
       setFilteredNotes(filteredNotes);
+      setSearchActive(true);
+    }, []);
 
-      if(filteredNotes.length === 0) return 'No results';
-    }
-
-    const handleClearSearch = () => {
-      setFilteredNotes(null);
-    }
+    const handleClearSearch = useCallback(() => {
+      setFilteredNotes([]);
+      setSearchActive(false);
+    }, []);
   //
 
   return (
@@ -127,13 +131,14 @@ export default function Main() {
               isCreating={false}
               showNotes={true}
               currentSession={currentSession}
-              notes={filteredNotes || notes}
+              notes={searchActive ? filteredNotes : notes}
               onComplete={noteCreated}
               onCancel={() => setIsCreating(false)}
               onNoteClick={handleNoteClick}
               onNotesUpdated={handleNotesUpdated}
               onUpdateStatus={handleUpdateStatus}
               onDeleteNote={handleDeleteNote}
+              searchActive={searchActive}
               key={Date.now()}
             />
           </div>

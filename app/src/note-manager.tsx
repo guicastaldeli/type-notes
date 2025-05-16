@@ -21,20 +21,23 @@ import NoteComponent from "./note-component";
         editingNote?: NoteProps | null;
         onUpdateStatus?: (id: number, status: Session) => Promise<void>;
         onDeleteNote?: (id: number) => Promise<void>;
+        searchActive?: boolean;
     }
 //
 
 export default function NoteManager({ 
     isCreating, 
     showNotes = false, 
-    currentSession, 
+    currentSession,
+    notes: propNotes,
     onComplete, 
     onCancel, 
     onNoteClick,
     onNotesUpdated,
     editingNote: initialEditNote,
     onUpdateStatus, 
-    onDeleteNote 
+    onDeleteNote,
+    searchActive
     }: NoteManagerProps) {
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
@@ -48,25 +51,13 @@ export default function NoteManager({
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
 
-    //Load Notes
-        const loadNotes = useCallback(async () => {
-            try {
-                const loadedNotes = await getNotes(currentSession);
-                setNotes(loadedNotes);
-            } catch(e) {
-                console.error(e);
-                setNotes([]);
-            }
-        }, [currentSession]);
+    useEffect(() => {
+        setNotes(propNotes);
+    }, [propNotes]);
 
-        useEffect(() => {
-            loadNotes();
-        }, [currentSession]);
-
-        useEffect(() => {
-            if(initialEditNote) setEditNote(initialEditNote);
-        }, [initialEditNote]);
-    //
+    useEffect(() => {
+        if(initialEditNote) setEditNote(initialEditNote);
+    }, [initialEditNote]);
 
     //Load Options
         interface SizeOption { 
@@ -134,7 +125,6 @@ export default function NoteManager({
             const clearContent = DOMPurify.sanitize(newNote.content)
             await _addNote(clearContent, currentSession);
             setNewNote({ title: '', content: '' });
-            await loadNotes();
             onComplete();
             if(onNotesUpdated) onNotesUpdated();
         } catch(e) {
@@ -365,24 +355,30 @@ export default function NoteManager({
     if(showNotes) {
         return (
             <div className="notes-list">
-                {notes.map((note) => (
-                    <div 
-                        id="_note"
-                        key={note.id}
-                        onClick={() => {
-                                if(onNoteClick)
-                                onNoteClick(note) 
-                            }
-                        }>
-                        <NoteComponent
-                            key={`note-${note.id}`}
-                            note={note}
-                            currentSession={currentSession}
-                            onUpdateStatus={onUpdateStatus || (() => Promise.resolve())}
-                            onDelete={onDeleteNote || (() => Promise.resolve())}
-                        />
+                {searchActive && notes.length === 0 ? (
+                    <div id="_empty-note-container">
+                        <div id="__empty-note-content">
+                            <span id="___empty-note">
+                                {searchActive ? 'No matching notes found.' : ''}
+                            </span>
+                        </div>
                     </div>
-                ))}
+                ) : (
+                    notes.map((note) => (
+                        <div 
+                            id="_note"
+                            key={note.id}
+                            onClick={() => { if(onNoteClick)onNoteClick(note) }}>
+                            <NoteComponent
+                                key={`note-${note.id}`}
+                                note={note}
+                                currentSession={currentSession}
+                                onUpdateStatus={onUpdateStatus || (() => Promise.resolve())}
+                                onDelete={onDeleteNote || (() => Promise.resolve())}
+                            />
+                        </div>
+                    ))
+                )}
             </div>
         )
     }

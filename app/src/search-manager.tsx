@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from "react";
 import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
@@ -15,59 +15,55 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleClearSearch = useCallback(() => {
-        setSearchTerm('');
         setSearchError(null);
-        onClearSearch();
         setIsSearching(false);
+        onClearSearch();
+        setSearchTerm('');
     }, [onClearSearch]);
 
-    useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-
-        const search = async () => {
-            //Empty
-            if(!searchTerm.trim()) {
-                handleClearSearch();
-                return;
-            }
-    
-            //Filtered
-                setIsSearching(true);
-                setSearchError(null);
-        
-                try {
-                    const filtered = await searchNotes(searchTerm, currentSession);
-                    if(isMounted) onSearch(filtered);
-                } catch(e) {
-                    if(isMounted) {
-                        console.error(e);
-                        setSearchError('Failed');
-                        onSearch([]);
-                    }
-                } finally {
-                    if(isMounted) setIsSearching(false);
-                }
-            //
+    const search = useCallback(async (term: string) => {
+        //Empty
+        if(!term.trim()) {
+            handleClearSearch();
+            return;
         }
+    
+        //Filtered
+            setIsSearching(true);
+            setSearchError(null);
+        
+            try {
+                await new Promise(res => setTimeout(res, 0));
+                const filtered = await searchNotes(term, currentSession);
+                onSearch(filtered);
+            } catch(e) {
+                console.error(e);
+                setSearchError('Failed');
+                onSearch([]);
+            } finally {
+                setIsSearching(false);
+            }
+        //
+    }, [currentSession, handleClearSearch, onSearch]);
 
-        const timer = setTimeout(() => {
-            search();
-        }, 500);
+    useEffect(() => {
+        if(debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
+
+        if(searchTerm.trim()) {
+            debounceTimeoutRef.current = setTimeout(() => {
+               search(searchTerm) 
+            }, 100);
+        } else {
+            handleClearSearch();
+        }
 
         return () => {
-            isMounted = false;
-            controller.abort();
-            clearTimeout(timer);
+            if(debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
         }
-    }, [
-        searchTerm,
-        currentSession, 
-        handleClearSearch, 
-        onSearch
-    ]);
+    }, [searchTerm]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
