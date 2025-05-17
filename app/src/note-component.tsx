@@ -65,11 +65,12 @@ export default function NoteComponent({ note, currentSession, onUpdateStatus, on
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = clearContent;
             
-            const divs = tempDiv.querySelectorAll('div');
-            divs.forEach(d => { truncateContent(d, 5)});
+            const divs = tempDiv.querySelectorAll('div:not([id="empty-content-"])');
+            divs.forEach(d => { truncateContent(d, 5) });
             
             if(divs.length > 1) {
                 const divArray = Array.from(divs);
+
                 for(let i = 1; i < divArray.length; i++) {
                     divs[i].remove();
                 }
@@ -88,6 +89,9 @@ export default function NoteComponent({ note, currentSession, onUpdateStatus, on
             const hasColor = tempDiv.querySelectorAll('span[style*="color"], font[color], *[style*="color"]');
             hasColor.forEach(el => { truncateContent(el, 5) });
         //
+
+        const isEmpty = tempDiv.textContent?.trim() === ''
+        if(isEmpty) console.log(isEmpty)
 
         const processedHtml = tempDiv.innerHTML;
         return hasColor ? processedHtml : `<span id="note-content-">${processedHtml}</span>`;

@@ -120,13 +120,32 @@ export default function NoteManager({
 
     //Add Note
     const addNote = async () => {
-        if(!newNote.content.trim()) {
+        const currentContent = contentRef.current?.innerHTML || newNote.content;
+
+        if(!currentContent.trim()) {
             cancelCreation();
             return;
         }
-        
+
+        //Empty Content
+            const contentEl = /<div[^>]*>/i.test(currentContent);
+
+            if(!contentEl) {
+                const updContent = currentContent + '<div id="empty-content-">No additional text</div>';
+
+                if(contentRef.current) contentRef.current.innerHTML = updContent;
+
+                setNewNote(prev => ({
+                    ...prev,
+                    content: updContent
+                }));
+            }
+        //
+
         try {
-            const clearContent = DOMPurify.sanitize(newNote.content)
+            const finalContent = contentRef.current?.innerHTML || newNote.content;
+            const clearContent = DOMPurify.sanitize(finalContent);
+
             await _addNote(clearContent, currentSession);
             setNewNote({ title: '', content: '' });
             onComplete();
@@ -273,19 +292,6 @@ export default function NoteManager({
         }, [editNote, newNote]);
     //
 
-    //Title Line
-        function formatLine(content: string, sizeValue: number, formatValue: string): string {
-            const lines = content.split(/\r?\n/);
-            if(lines.length === 0) return content;
-
-            const size = textOptions.sizeOptions.find(s => s.value === sizeValue.toString())?.style;
-            const format = textOptions.sizeOptions.find(f => f.name === formatValue)?.style;
-            const styleString = Object.entries({ ...size, ...format }).map(([key, value]) => `${key}:${value}`).join(';');
-            lines[0] = `<span style="${styleString}">${lines[0]}</span>`;
-            return lines.join('\n');
-        }
-    //
-
     //Content
         useEffect(() => {
             if(contentRef.current) {
@@ -372,7 +378,7 @@ export default function NoteManager({
                         <div 
                             id="_note"
                             key={note.id}
-                            onClick={() => { if(onNoteClick)onNoteClick(note) }}>
+                            onClick={() => { if(onNoteClick) onNoteClick(note) }}>
                             <NoteComponent
                                 key={`note-${note.id}`}
                                 note={note}
@@ -389,8 +395,8 @@ export default function NoteManager({
 
     //Main...
         const renderContent = () => {
-            const noteData = isEditing ? editNote : newNote;
             const saveHandler = isEditing ? updateNote : addNote;
+            const isViewOnly = currentSession === 'deleted' || currentSession === 'archived';
 
             return (
                 <div className="note-manager">
@@ -398,9 +404,9 @@ export default function NoteManager({
                         <div id="_note-actions">
                             <div id="__note-save-container">
                                 <button onClick={saveHandler}>
-                                    {
-                                        currentSession == 'default' 
-                                        ? 'Home' : ''
+                                    { 
+                                        (currentSession == 'default' ? 'Home' : '') || 
+                                        (currentSession == 'archived' || 'deleted' ? 'Back' : '') 
                                     }
                                 </button>
                             </div>
@@ -412,11 +418,11 @@ export default function NoteManager({
                                     <div
                                         id="note-content-"
                                         ref={contentRef}
-                                        contentEditable="true"
-                                        onSelect={handleTextSelection}
-                                        onClick={handleTextSelection}
-                                        onInput={handleContentInput}
-                                        onKeyDown={handleKeyDown}
+                                        contentEditable={!isViewOnly}
+                                        onSelect={isViewOnly ? undefined : handleTextSelection}
+                                        onClick={isViewOnly ? undefined : handleTextSelection}
+                                        onInput={isViewOnly ? undefined : handleContentInput}
+                                        onKeyDown={isViewOnly ? undefined : handleKeyDown}
                                     />
                                 </div>
                             </div>

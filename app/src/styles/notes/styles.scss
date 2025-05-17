@@ -28,10 +28,11 @@
                 #_note-item {
                     #__note-content {
                         #___note-content-el {
-                            #note-content- {
-                                div {
-                                    color: rgb(107, 107, 107);
-                                }
+                            #empty-content- {
+                                font-style: italic;
+                                font-size: 0.9rem;
+                                
+                                color: rgb(142, 142, 142);
                             }
                         }
                     }
