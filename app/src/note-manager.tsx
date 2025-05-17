@@ -21,7 +21,9 @@ import NoteComponent from "./note-component";
         editingNote?: NoteProps | null;
         onUpdateStatus?: (id: number, status: Session) => Promise<void>;
         onDeleteNote?: (id: number) => Promise<void>;
-        searchActive?: boolean;
+        isSearching?: boolean;
+        isEmptyRes?: boolean;
+        searchTerm?: string;
     }
 //
 
@@ -37,7 +39,9 @@ export default function NoteManager({
     editingNote: initialEditNote,
     onUpdateStatus, 
     onDeleteNote,
-    searchActive
+    isSearching = false,
+    isEmptyRes = false,
+    searchTerm = ''
     }: NoteManagerProps) {
     const [notes, setNotes] = useState<NoteProps[]>([]);
     const [newNote, setNewNote] = useState({ title: '', content: '' });
@@ -350,16 +354,16 @@ export default function NoteManager({
             }
         }, [isEditing, editNote, newNote]);
     //
-
+    
     //Note List
     if(showNotes) {
         return (
             <div className="notes-list">
-                {searchActive && notes.length === 0 ? (
+                {isEmptyRes && !searchTerm.trim() ? (
                     <div id="_empty-note-container">
                         <div id="__empty-note-content">
                             <span id="___empty-note">
-                                {searchActive ? 'No matching notes found.' : ''}
+                                No matching notes found.
                             </span>
                         </div>
                     </div>

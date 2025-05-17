@@ -10,9 +10,10 @@ interface GlobalHeaderProps {
     currentSession: Session;
     onSearch: (filteredNotes: NoteProps[]) => void;
     onClearSearch: () => void;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function GlobalHeader({ notes, currentSession, onSearch, onClearSearch }: GlobalHeaderProps) {
+export default function GlobalHeader({ notes, currentSession, onSearch, onClearSearch, onSearchTermChange }: GlobalHeaderProps) {
     return (
         <div id="-global-header">
             <div id="--header-content">
@@ -32,6 +33,7 @@ export default function GlobalHeader({ notes, currentSession, onSearch, onClearS
                                 currentSession={currentSession}
                                 onSearch={onSearch}
                                 onClearSearch={onClearSearch}
+                                onSearchTermChange={onSearchTermChange}
                             />
                         </div>
                     </div>

@@ -103,7 +103,7 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
 //Notes
     export async function getNotes(status: string): Promise<any[]> {
         return initDB(db => {
-            const stmt = db.prepare('SELECT * FROM notes WHERE status = ?');
+            const stmt = db.prepare('SELECT * FROM notes WHERE status = ? ORDER BY created_at DESC');
             stmt.bind([status]);
             const notes = [];
             while(stmt.step()) {
@@ -353,9 +353,11 @@ export async function searchNotes(searchTerm: string, status?: string): Promise<
         const query = status
             ? `SELECT * FROM notes 
                 WHERE (content LIKE ? COLLATE NOCASE) 
-                AND status = ?`
+                AND status = ?
+                ORDER BY created_at DESC`
             : `SELECT * FROM notes 
-                WHERE content LIKE ? COLLATE NOCASE`
+                WHERE content LIKE ? COLLATE NOCASE
+                ORDER BY created_at DESC`
             ;
         ;
     

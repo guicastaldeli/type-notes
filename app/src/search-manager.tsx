@@ -9,11 +9,13 @@ interface SearchManagerProps {
     currentSession: Session;
     onSearch: (filteredNotes: NoteProps[]) => void;
     onClearSearch: () => void;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function SearchManager({ notes, currentSession, onSearch, onClearSearch }: SearchManagerProps) {
+export default function SearchManager({ notes, currentSession, onSearch, onClearSearch, onSearchTermChange }: SearchManagerProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [isEmptyRes, setIsEmptyRes] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -28,6 +30,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
         //Empty
         if(!term.trim()) {
             handleClearSearch();
+            setIsEmptyRes(false);
             return;
         }
     
@@ -39,6 +42,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
                 await new Promise(res => setTimeout(res, 0));
                 const filtered = await searchNotes(term, currentSession);
                 onSearch(filtered);
+                setIsEmptyRes(filtered.length === 0);
             } catch(e) {
                 console.error(e);
                 setSearchError('Failed');
@@ -47,7 +51,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
                 setIsSearching(false);
             }
         //
-    }, [currentSession, handleClearSearch, onSearch]);
+    }, [currentSession, handleClearSearch, onSearch, onSearchTermChange]);
 
     useEffect(() => {
         if(debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
@@ -66,7 +70,9 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     }, [searchTerm]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
+        const term = e.target.value;
+        setSearchTerm(term);
+        onSearchTermChange(term);
     }
 
     //Session Display
