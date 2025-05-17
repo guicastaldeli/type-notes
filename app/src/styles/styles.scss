@@ -5,14 +5,18 @@
 
 /* ~~~~~~~~~~~~ */
 @font-face {
-    font-family: 'SF Pro Display';
-    src: url('../assets/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+    font-family: 'Segoe UI';
+    src: url('../assets/fonts/SEGOEUI.TTF') format('opentype');
     font-style: normal;
 }
 
-$glFont: 'SF Pro Display';
+$glFont: 'Segoe UI';
 
 /* ~~~~~~~~~~~~ */
+
+* {
+    font-family: $glFont;
+}
 
 html, body {
     font-family: $glFont;
