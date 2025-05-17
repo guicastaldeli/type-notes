@@ -6,24 +6,36 @@
   min-height: 0;
 }
 #--notes-container #---notes-content {
+  cursor: default;
   overflow-y: auto;
   width: 100%;
   height: 100%;
 }
 #--notes-container #---notes-content .notes-list {
+  display: flex;
+  align-items: start;
+  justify-content: center;
   overflow-y: auto;
   width: 100%;
   height: 100%;
 }
 #--notes-container #---notes-content .notes-list #_note {
-  width: 100%;
+  width: 95%;
+}
+#--notes-container #---notes-content .notes-list #_note #_note-item {
+  border-bottom: 0.1rem solid rgb(182, 182, 182);
   /* hover */
 }
-#--notes-container #---notes-content .notes-list #_note:hover {
+#--notes-container #---notes-content .notes-list #_note #_note-item:hover {
   background-color: rgba(0, 0, 0, 0.309);
 }
-#--notes-container #---notes-content .notes-list #_note #_note-item #__note-content #___note-content-el #note-content- div {
-  color: rgb(107, 107, 107);
+#--notes-container #---notes-content .notes-list #_note #_note-item #__note-content #___note-content-el {
+  font-size: 18px !important;
+}
+#--notes-container #---notes-content .notes-list #_note #_note-item #__note-content #___note-content-el #empty-content- {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: rgb(142, 142, 142);
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container {
   display: flex;

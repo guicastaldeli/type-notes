@@ -4,13 +4,17 @@
 /* ~~~~~~~~~~~~ */
 /* ~~~~~~~~~~~~ */
 @font-face {
-  font-family: "SF Pro Display";
-  src: url("../assets/fonts/SF-Pro-Display-Regular.otf") format("opentype");
+  font-family: "Segoe UI";
+  src: url("../assets/fonts/SEGOEUI.TTF") format("opentype");
   font-style: normal;
 }
 /* ~~~~~~~~~~~~ */
+* {
+  font-family: "Segoe UI";
+}
+
 html, body {
-  font-family: "SF Pro Display";
+  font-family: "Segoe UI";
 }
 
 html, body, #root {

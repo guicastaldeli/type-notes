@@ -15,9 +15,9 @@ interface SessionManagerProps {
 export default function SessionManager({ currentSession, onSessionChange, onNotesUpdated }: SessionManagerProps) {
     const sessions: 
         { id: Session; label: string; icon?: string }[] = [
-        { id: 'default', label: 'Home' },
-        { id: 'archived', label: 'Archived' },
-        { id: 'deleted', label: 'Deleted' }
+        { id: 'default', label: 'All Notes' },
+        { id: 'archived', label: 'Archived Notes' },
+        { id: 'deleted', label: 'Deleted Notes' }
     ];
 
     const updateNoteStatus = async(id: number, updStatus: Session) => {
@@ -50,7 +50,9 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                             className={currentSession === s.id ? 'current' : 'inactive'}
                             onClick={() => onSessionChange(s.id)}
                         >
-                            {s.label}
+                            <span>
+                                {s.label}
+                            </span>
                         </button>
                     </div>
                 ))}
