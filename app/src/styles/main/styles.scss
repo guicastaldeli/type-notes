@@ -42,7 +42,27 @@ $glFont: 'Segoe UI';
                     #__search-bar-content {
                         #input-search-container-content- {
                             #input-search-- {
-                                
+                                width: 20rem;
+                                height: 2.7rem;
+
+                                border: 0.1rem solid rgb(182, 182, 182);
+                                border-radius: 0.5rem;
+
+                                padding-left: 1rem;
+
+                                /* placeholder */
+                                &::placeholder {
+                                    position: relative;
+                                    top: -0.05rem;
+
+                                    color: rgb(105, 105, 105);
+                                }
+
+                                /* focus */
+                                &:focus {
+                                    outline: none;
+                                    border: 0.1rem solid rgb(0, 98, 255);;
+                                }
                             }
                         }
                     }
@@ -66,7 +86,7 @@ $glFont: 'Segoe UI';
             #--bar {
                 width: 8%;
 
-                border-right: 0.1rem solid rgb(182, 182, 182);;
+                border-right: 0.1rem solid rgb(182, 182, 182);
 
                 #---session-manager {
                     height: 100%;
@@ -100,12 +120,13 @@ $glFont: 'Segoe UI';
 
                             /* buttons */
                                 .current {
-                                    background-color: rgb(230, 238, 251);
+                                    background-color: rgb(234, 236, 240);
                                     color: rgb(0, 0, 0);
 
                                     /* hover */
                                     &:hover {
-                                        background-color: rgb(201, 209, 219);
+                                        background-color: rgb(219, 220, 224);
+                                        transition: background-color 0.13s ease;
                                     }
                                 }
             
@@ -115,7 +136,8 @@ $glFont: 'Segoe UI';
 
                                     /* hover */
                                     &:hover {
-                                        background-color: rgb(230, 230, 230);
+                                        background-color: rgb(219, 220, 224);
+                                        transition: background-color 0.13s ease;
                                     }
                                 }
                             /* */

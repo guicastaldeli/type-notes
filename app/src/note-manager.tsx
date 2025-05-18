@@ -51,6 +51,7 @@ export default function NoteManager({
     const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
+    const [activeNoteId, setActiveNoteId] = useState<number | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -132,7 +133,6 @@ export default function NoteManager({
 
             if(!contentEl) {
                 const updContent = currentContent + '<div id="empty-content-">No additional text</div>';
-
                 if(contentRef.current) contentRef.current.innerHTML = updContent;
 
                 setNewNote(prev => ({
@@ -158,6 +158,7 @@ export default function NoteManager({
     const cancelCreation = () => {
         setNewNote({ title: '', content: '' });
         setEditNote(null);
+        setActiveNoteId(null);
         onCancel();
     }
 
@@ -165,18 +166,19 @@ export default function NoteManager({
         if(!editNote) return;
 
         const currentContent = contentRef.current?.innerHTML || editNote.content;
-        const isEmpty = !currentContent.trim() || currentContent.replace(/<br\s*\/?>/gi, '').trim() === '';
+        const isEmpty = !currentContent.trim() || 
+                        currentContent.replace(/<br\s*\/?>/gi, '').trim() === '' ||
+                        currentContent.includes('empty-content-');
 
-        if(isEmpty) {
-            if(editNote.id) {
-                try {
-                    if(onDeleteNote) await onDeleteNote(editNote.id);
-                    setEditNote(null);
-                    onComplete();
-                    return;
-                } catch(e) {
-                    console.error(e);
-                }
+        if(isEmpty && editNote.id) {
+            try {
+                if(onDeleteNote) await onDeleteNote(editNote.id);
+                setEditNote(null);
+                setActiveNoteId(null);
+                onComplete();
+                return;
+            } catch(e) {
+                console.error(e);
             }
         }
 
@@ -295,7 +297,8 @@ export default function NoteManager({
     //Content
         useEffect(() => {
             if(contentRef.current) {
-                const exContent = isEditing ? editNote?.content || '' : newNote.content;
+                let exContent = isEditing ? editNote?.content || '' : newNote.content;
+                if(exContent.includes('empty-content-')) exContent = exContent.replace(/<div id="empty-content-">No additional text<\/div>/g, '');
                 
                 if(contentRef.current.innerHTML !== exContent) {
                     contentRef.current.innerHTML = exContent;
@@ -375,10 +378,14 @@ export default function NoteManager({
                     </div>
                 ) : (
                     notes.map((note) => (
-                        <div 
+                        <div
                             id="_note"
                             key={note.id}
-                            onClick={() => { if(onNoteClick) onNoteClick(note) }}>
+                            onClick={() => {
+                                if(onNoteClick) onNoteClick(note);
+                                setActiveNoteId(note.id);
+                            }}
+                            >
                             <NoteComponent
                                 key={`note-${note.id}`}
                                 note={note}

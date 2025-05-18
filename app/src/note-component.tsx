@@ -27,7 +27,14 @@ function formatDate(dateString: string): string {
     }
 }
 
-export default function NoteComponent({ note, currentSession, onUpdateStatus, onDelete }: NoteComponentProps) {
+export default function NoteComponent({ 
+    note, 
+    currentSession, 
+    onUpdateStatus, 
+    onDelete 
+    }: NoteComponentProps) {
+    const [showActions, setShowActions] = useState(false);
+
     const truncateContent = (node: Node, maxLength: number): number => {
         let remLength = maxLength;
 
@@ -101,103 +108,115 @@ export default function NoteComponent({ note, currentSession, onUpdateStatus, on
 
     return (
         <div id="_note-item">
-            <div id="__note-content">
+            <div id="__note-item-content">
+                <div id="__note-content">
+                    <div 
+                        id="___note-content-el"
+                        style={{ fontSize: '21px' }} 
+                        dangerouslySetInnerHTML={{ __html: wrappedContent }} 
+                    />
+                </div>
+
                 <div 
-                    id="___note-content-el"
-                    style={{ fontSize: '21px' }} 
-                    dangerouslySetInnerHTML={{ __html: wrappedContent }} 
-                />
-            </div>
+                    id="__note-actions"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowActions(!showActions);
+                    }}>
+                    <div
+                        id="___note-actions-content"
+                        style={{ display: showActions ? 'block' : 'none' }}>
+                        {/* Default */}
+                        {currentSession === 'default' && (
+                            <div id="___act-session-default">
+                                <div id="container-btn-archive-">
+                                    <button 
+                                        id="btn-archive--" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateStatus(note.id, 'archived');
+                                        }}
+                                    >
+                                        Archive
+                                    </button>
+                                </div>
+                                <div id="container-btn-delete-">
+                                    <button 
+                                        id="btn-delete--" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateStatus(note.id, 'deleted');
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
-            <div id="__note-actions">
-                {/* Default */}
-                {currentSession === 'default' && (
-                    <div id="___act-session-default">
-                        <div id="container-btn-archive-">
-                            <button 
-                                id="btn-archive--" 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onUpdateStatus(note.id, 'archived');
-                                }}
-                            >
-                                Archive
-                            </button>
-                        </div>
-                        <div id="container-btn-delete-">
-                            <button 
-                                id="btn-delete--" 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onUpdateStatus(note.id, 'deleted');
-                                }}
-                            >
-                                Delete
-                            </button>
+                        {/* Archived */}
+                        {currentSession === 'archived' && (
+                            <div id="___act-session-archived">
+                                <div id="container-btn-restore-">
+                                    <button 
+                                        id="btn-restore--" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateStatus(note.id, 'default');
+                                        }}
+                                    >
+                                        Restore
+                                    </button>
+                                </div>
+                                <div id="container-btn-delete-">
+                                    <button 
+                                        id="btn-delete--" 
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            onUpdateStatus(note.id, 'deleted'); 
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Deleted */}
+                        {currentSession === 'deleted' && (
+                            <div id="___act-session-deleted">
+                                <div id="container-btn-restore-">
+                                    <button 
+                                        id="btn-restore--" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onUpdateStatus(note.id, 'default');
+                                        }}
+                                    >
+                                        Restore
+                                    </button>
+                                </div>
+                                <div id="container-btn-delete-perm-">
+                                    <button 
+                                        id="btn-delete-perm" 
+                                        onClick={(e) => {
+                                            e.stopPropagation(); 
+                                            onDelete(note.id);
+                                        }}
+                                    >
+                                        Delete!
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Note Info */}
+                        <div id="__note-info">
+                            <div id="__note-info-content">
+                                <span id="___created-info">{formatDate(note.createdAt)}</span>
+                            </div>
                         </div>
                     </div>
-                )}
-
-                {/* Archived */}
-                {currentSession === 'archived' && (
-                    <div id="___act-session-archived">
-                        <div id="container-btn-restore-">
-                            <button 
-                                id="btn-restore--" 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onUpdateStatus(note.id, 'default');
-                                }}
-                            >
-                                Restore
-                            </button>
-                        </div>
-                        <div id="container-btn-delete-">
-                            <button 
-                                id="btn-delete--" 
-                                onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    onUpdateStatus(note.id, 'deleted'); 
-                                }}
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Deleted */}
-                {currentSession === 'deleted' && (
-                    <div id="___act-session-deleted">
-                        <div id="container-btn-restore-">
-                            <button 
-                                id="btn-restore--" 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onUpdateStatus(note.id, 'default');
-                                }}
-                            >
-                                Restore
-                            </button>
-                        </div>
-                        <div id="container-btn-delete-perm-">
-                            <button 
-                                id="btn-delete-perm" 
-                                onClick={(e) => {
-                                    e.stopPropagation(); 
-                                    onDelete(note.id);
-                                }}
-                            >
-                                Delete!
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <div id="__note-info">
-                <div id="__note-info-content">
-                    <span id="___created-info">{formatDate(note.createdAt)}</span>
                 </div>
             </div>
         </div>

@@ -27,7 +27,8 @@
   /* hover */
 }
 #--notes-container #---notes-content .notes-list #_note #_note-item:hover {
-  background-color: rgba(0, 0, 0, 0.309);
+  background-color: rgb(219, 220, 224);
+  transition: background-color 0.13s ease;
 }
 #--notes-container #---notes-content .notes-list #_note #_note-item #__note-content #___note-content-el {
   font-size: 18px !important;
@@ -36,6 +37,9 @@
   font-style: italic;
   font-size: 0.9rem;
   color: rgb(142, 142, 142);
+}
+#--notes-container #---notes-content .notes-list .current {
+  background-color: rgb(219, 220, 224);
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container {
   display: flex;

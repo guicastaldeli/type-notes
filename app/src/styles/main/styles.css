@@ -71,12 +71,13 @@
   cursor: pointer;
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .current {
-  background-color: rgb(230, 238, 251);
+  background-color: rgb(234, 236, 240);
   color: rgb(0, 0, 0);
   /* hover */
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .current:hover {
-  background-color: rgb(201, 209, 219);
+  background-color: rgb(219, 220, 224);
+  transition: background-color 0.13s ease;
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .inactive {
   background-color: rgb(255, 255, 255);
@@ -84,7 +85,8 @@
   /* hover */
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .inactive:hover {
-  background-color: rgb(230, 230, 230);
+  background-color: rgb(219, 220, 224);
+  transition: background-color 0.13s ease;
 }
 .main #-global-container #--notes-container {
   width: 20%;
