@@ -120,12 +120,12 @@ $glFont: 'Segoe UI';
 
                             /* buttons */
                                 .current {
-                                    background-color: rgb(234, 236, 240);
-                                    color: rgb(0, 0, 0);
+                                    background-color: rgb(0, 98, 255);
+                                    color: rgb(255, 255, 255);
 
                                     /* hover */
                                     &:hover {
-                                        background-color: rgb(219, 220, 224);
+                                        background-color: rgb(0, 75, 197);
                                         transition: background-color 0.13s ease;
                                     }
                                 }
@@ -136,7 +136,7 @@ $glFont: 'Segoe UI';
 
                                     /* hover */
                                     &:hover {
-                                        background-color: rgb(219, 220, 224);
+                                        background-color: rgb(234, 236, 240);
                                         transition: background-color 0.13s ease;
                                     }
                                 }

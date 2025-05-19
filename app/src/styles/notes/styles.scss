@@ -27,7 +27,7 @@
         
             #_note {
                 width: 95%;
-        
+                
                 #_note-item {
                     display: flex;
                     align-items: center;
@@ -66,10 +66,6 @@
                 }
             }
 
-            .current {
-                background-color: rgb(219, 220, 224);
-            }
-
             #_empty-note-container {
                 display: flex;
                 justify-content: center;
@@ -106,6 +102,11 @@
             }
         }
     }
+}
+
+/* current */
+.current {
+    background-color: rgb(219, 220, 224);
 }
 
 /* note actions */

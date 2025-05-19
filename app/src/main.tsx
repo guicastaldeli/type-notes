@@ -10,6 +10,7 @@ import GlobalHeader from './global-header';
 import NoteManager from './note-manager';
 
 import './styles/main/styles.scss';
+import { setegid } from 'process';
 
 export default function Main() {
   const [isCreating, setIsCreating] = useState(false);
@@ -40,6 +41,8 @@ export default function Main() {
     const handleUpdateStatus = async(id: number, status: Session) => {
       try {
         await _updateNoteStatus(id, status);
+        setNotes(prev => prev.map(note => note.id === id ? { ...note, status } : note));
+        setFilteredNotes(prev => prev.map(note => note.id === id ? { ...note, status } : note));
         if(status !== currentSession) loadNotes();
       } catch(e) {
         console.error(e);
@@ -49,7 +52,14 @@ export default function Main() {
     const handleDeleteNote = async(id: number) => {
       try {
         await _deleteNote(id);
-        loadNotes();
+
+        setNotes(prev => prev.filter(note => note.id !== id));
+        setFilteredNotes(prev => prev.filter(note => note.id !== id));
+
+        if(editNote?.id === id) {
+          setEditNote(null);
+          setIsCreating(false);
+        }
       } catch(e) {
         console.error(e);
       }

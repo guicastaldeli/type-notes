@@ -28,6 +28,29 @@
   /* logo */
   /* search bar */
 }
+.main #-global-header #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-- {
+  width: 20rem;
+  height: 2.7rem;
+  border: 0.1rem solid rgb(182, 182, 182);
+  border-radius: 0.5rem;
+  padding-left: 1rem;
+  /* placeholder */
+  /* focus */
+}
+.main #-global-header #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::-moz-placeholder {
+  position: relative;
+  top: -0.05rem;
+  color: rgb(105, 105, 105);
+}
+.main #-global-header #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::placeholder {
+  position: relative;
+  top: -0.05rem;
+  color: rgb(105, 105, 105);
+}
+.main #-global-header #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--:focus {
+  outline: none;
+  border: 0.1rem solid rgb(0, 98, 255);
+}
 .main #-global-header #--header-content #---bar-info {
   visibility: hidden;
 }
@@ -71,12 +94,12 @@
   cursor: pointer;
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .current {
-  background-color: rgb(234, 236, 240);
-  color: rgb(0, 0, 0);
+  background-color: rgb(0, 98, 255);
+  color: rgb(255, 255, 255);
   /* hover */
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .current:hover {
-  background-color: rgb(219, 220, 224);
+  background-color: rgb(0, 75, 197);
   transition: background-color 0.13s ease;
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .inactive {
@@ -85,7 +108,7 @@
   /* hover */
 }
 .main #-global-container #--bar #---session-manager #_s-content #__s-content-container .inactive:hover {
-  background-color: rgb(219, 220, 224);
+  background-color: rgb(234, 236, 240);
   transition: background-color 0.13s ease;
 }
 .main #-global-container #--notes-container {

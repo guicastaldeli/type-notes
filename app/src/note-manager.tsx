@@ -51,7 +51,6 @@ export default function NoteManager({
     const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const [activeNoteId, setActiveNoteId] = useState<number | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -158,7 +157,6 @@ export default function NoteManager({
     const cancelCreation = () => {
         setNewNote({ title: '', content: '' });
         setEditNote(null);
-        setActiveNoteId(null);
         onCancel();
     }
 
@@ -174,7 +172,6 @@ export default function NoteManager({
             try {
                 if(onDeleteNote) await onDeleteNote(editNote.id);
                 setEditNote(null);
-                setActiveNoteId(null);
                 onComplete();
                 return;
             } catch(e) {
@@ -185,11 +182,10 @@ export default function NoteManager({
         try {
             const clearContent = DOMPurify.sanitize(currentContent);
             await _updateNote(editNote.id, clearContent);
+            if(editNote.status !== currentSession && onUpdateStatus) await onUpdateStatus(editNote.id, currentSession);
 
-            if(editNote.status !== currentContent && onUpdateStatus) await onUpdateStatus(editNote.id, currentSession);
             setEditNote(null);
             onComplete();
-            
             if(onNotesUpdated) onNotesUpdated();
         } catch(e) {
             console.error(e);
@@ -365,6 +361,8 @@ export default function NoteManager({
     //
     
     //Note List
+    const noteRef = useRef<Record<number, HTMLDivElement>>({})
+
     if(showNotes) {
         return (
             <div className="notes-list">
@@ -381,16 +379,32 @@ export default function NoteManager({
                         <div
                             id="_note"
                             key={note.id}
-                            onClick={() => {
-                                if(onNoteClick) onNoteClick(note);
-                                setActiveNoteId(note.id);
-                            }}
-                            >
+                            ref={(el) => {
+                                if(el) {
+                                    noteRef.current[note.id] = el;
+                                }
+                            }}>
                             <NoteComponent
                                 key={`note-${note.id}`}
                                 note={note}
                                 currentSession={currentSession}
-                                onUpdateStatus={onUpdateStatus || (() => Promise.resolve())}
+                                onUpdateStatus={(id, updStatus) => {
+                                    const ec = document.querySelector('#note-content-.edit');
+                                    if(onUpdateStatus) onUpdateStatus(id, updStatus);
+                                    if(ec) onComplete();
+                                }}
+                                onClick={(e) => {
+                                    document.querySelectorAll('#_note-item').forEach(el => {
+                                    el.classList.remove('current');
+                                });
+                                
+                                // Add 'current' class to the clicked note
+                                const clickedEl = noteRef.current[note.id]?.querySelector('#_note-item');
+                                clickedEl?.classList.add('current');
+                                
+                                // Call the onNoteClick callback
+                                if(onNoteClick) onNoteClick(note);
+                                }}
                                 onDelete={onDeleteNote || (() => Promise.resolve())}
                             />
                         </div>
@@ -424,6 +438,7 @@ export default function NoteManager({
                                 <div id="___note-content-container">
                                     <div
                                         id="note-content-"
+                                        className={isEditing ? 'edit' : ''}
                                         ref={contentRef}
                                         contentEditable={!isViewOnly}
                                         onSelect={isViewOnly ? undefined : handleTextSelection}

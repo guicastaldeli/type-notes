@@ -15,6 +15,7 @@ export interface NoteComponentProps {
     note: NoteProps;
     currentSession: NoteStatus;
     onUpdateStatus: (id: number, updStatus: NoteStatus) => void;
+    onClick?: (e: React.MouseEvent) => void;
     onDelete: (id: number) => void;
 }
 
@@ -30,8 +31,9 @@ function formatDate(dateString: string): string {
 export default function NoteComponent({ 
     note, 
     currentSession, 
-    onUpdateStatus, 
-    onDelete 
+    onUpdateStatus,
+    onClick, 
+    onDelete,
     }: NoteComponentProps) {
     const [showActions, setShowActions] = useState(false);
 
@@ -97,9 +99,6 @@ export default function NoteComponent({
             hasColor.forEach(el => { truncateContent(el, 5) });
         //
 
-        const isEmpty = tempDiv.textContent?.trim() === ''
-        if(isEmpty) console.log(isEmpty)
-
         const processedHtml = tempDiv.innerHTML;
         return hasColor ? processedHtml : `<span id="note-content-">${processedHtml}</span>`;
     }
@@ -107,7 +106,12 @@ export default function NoteComponent({
     const wrappedContent = processContent(note.content);
 
     return (
-        <div id="_note-item">
+        <div 
+            id="_note-item"
+            onClick={(e) => {
+                e.stopPropagation();
+                onClick?.(e);
+            }}>
             <div id="__note-item-content">
                 <div id="__note-content">
                     <div 
