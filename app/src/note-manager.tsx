@@ -165,9 +165,7 @@ export default function NoteManager({
         if(!editNote) return;
 
         const currentContent = contentRef.current?.innerHTML || editNote.content;
-        const isEmpty = !currentContent.trim() || 
-                        currentContent.replace(/<br\s*\/?>/gi, '').trim() === '' ||
-                        currentContent.includes('empty-content-');
+        const isEmpty = !currentContent.trim() || currentContent.replace(/<br\s*\/?>/gi, '').trim() === ''
 
         if(isEmpty && editNote.id) {
             try {
@@ -412,6 +410,7 @@ export default function NoteManager({
                 <div 
                     className="note-manager"
                     ref={(el) => {
+                        //Current Note
                         if(el && editNote) {
                             const activeNoteItem = document.querySelector(`[data-note-id="${editNote.id}"]`);
                             if(activeNoteItem) activeNoteItem.classList.add('current');
