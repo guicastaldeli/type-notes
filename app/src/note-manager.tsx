@@ -51,6 +51,7 @@ export default function NoteManager({
     const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
+    const noteRef = useRef<Record<number, HTMLDivElement>>({});
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -361,8 +362,6 @@ export default function NoteManager({
     //
     
     //Note List
-    const noteRef = useRef<Record<number, HTMLDivElement>>({})
-
     if(showNotes) {
         return (
             <div className="notes-list">
@@ -379,11 +378,7 @@ export default function NoteManager({
                         <div
                             id="_note"
                             key={note.id}
-                            ref={(el) => {
-                                if(el) {
-                                    noteRef.current[note.id] = el;
-                                }
-                            }}>
+                            ref={(el) => { if(el) noteRef.current[note.id] = el; }}>
                             <NoteComponent
                                 key={`note-${note.id}`}
                                 note={note}
@@ -394,16 +389,10 @@ export default function NoteManager({
                                     if(ec) onComplete();
                                 }}
                                 onClick={(e) => {
-                                    document.querySelectorAll('#_note-item').forEach(el => {
-                                    el.classList.remove('current');
-                                });
-                                
-                                // Add 'current' class to the clicked note
-                                const clickedEl = noteRef.current[note.id]?.querySelector('#_note-item');
-                                clickedEl?.classList.add('current');
-                                
-                                // Call the onNoteClick callback
-                                if(onNoteClick) onNoteClick(note);
+                                    e.stopPropagation();
+                                    
+                                    if(onNoteClick) onNoteClick(note);
+                                    setEditNote(note);
                                 }}
                                 onDelete={onDeleteNote || (() => Promise.resolve())}
                             />
@@ -420,7 +409,14 @@ export default function NoteManager({
             const isViewOnly = currentSession === 'deleted' || currentSession === 'archived';
 
             return (
-                <div className="note-manager">
+                <div 
+                    className="note-manager"
+                    ref={(el) => {
+                        if(el) {
+                            const activeNoteItem = document.getElementById('_note-item');
+                            activeNoteItem?.classList.add('current');
+                        }
+                    }}>
                     <div id="---note-creator">
                         <div id="_note-actions">
                             <div id="__note-save-container">
