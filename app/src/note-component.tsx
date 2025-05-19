@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from 'react';
 import DOMPurify from "dompurify";
+import useScreenSize from "./screen-resolution";
 
 type NoteStatus = 'default' | 'archived' | 'deleted';
 
@@ -37,6 +39,16 @@ export default function NoteComponent({
     onDelete,
     }: NoteComponentProps) {
     const [showActions, setShowActions] = useState(false);
+    const { w } = useScreenSize();
+
+    const getTruncationLength = () => {
+        if(w >= 1850) return 15;
+        if(w >= 1440) return 12;
+        if(w >= 1024) return 8;
+        if(w >= 768) return 5;
+        if(w >= 480) return 3;
+        return 3;
+    }
 
     const truncateContent = (node: Node, maxLength: number): number => {
         let remLength = maxLength;
@@ -70,6 +82,9 @@ export default function NoteComponent({
             ALLOWED_TAGS: ['span', 'div'],
             ALLOWED_ATTR: ['id', 'style', 'color'],
         });
+
+        //Truncate
+        const truncLength = getTruncationLength();
         
         //Div
             const tempDiv = document.createElement('div');
@@ -77,7 +92,8 @@ export default function NoteComponent({
             tempDiv.innerHTML = clearContent;
             
             const divs = tempDiv.querySelectorAll('div:not([id="empty-content-"])');
-            divs.forEach(d => { truncateContent(d, 5) });
+            divs.forEach(d => { truncateContent(d, truncLength) });
+
             if(divs.length > 1) {
                 const fDiv = divs[0];
                 Array.from(divs).slice(1).forEach(div => {
@@ -108,14 +124,14 @@ export default function NoteComponent({
             Array.from(tempDiv.childNodes).forEach(c => {
                 if(c.nodeType === Node.TEXT_NODE) {
                     const textNode = c as Text;
-                    if(textNode.data.length > 5) textNode.data = textNode.data.substring(0, 5) + '...';
+                    if(textNode.data.length > truncLength) textNode.data = textNode.data.substring(0, truncLength) + '...';
                 }
             });
         //
     
         //Colored
             const hasColor = tempDiv.querySelectorAll('span[style*="color"], font[color], *[style*="color"]');
-            hasColor.forEach(el => { truncateContent(el, 5) });
+            hasColor.forEach(el => { truncateContent(el, truncLength) });
         //
 
         const processedHtml = tempDiv.innerHTML;

@@ -281,7 +281,6 @@ export default function NoteManager({
         useEffect(() => {
             if(contentRef.current) {
                 let exContent = isEditing ? editNote?.content || '' : newNote.content;
-                //if(exContent.includes('empty-content-')) exContent = exContent.replace(/<div id="empty-content-">No additional text<\/div>/g, '');
                 
                 if(contentRef.current.innerHTML !== exContent) {
                     contentRef.current.innerHTML = exContent;
