@@ -73,10 +73,18 @@ export default function NoteComponent({
         
         //Div
             const tempDiv = document.createElement('div');
+            tempDiv.id = 'test'
             tempDiv.innerHTML = clearContent;
             
             const divs = tempDiv.querySelectorAll('div:not([id="empty-content-"])');
             divs.forEach(d => { truncateContent(d, 5) });
+            if(divs.length > 1) {
+                const fDiv = divs[0];
+                Array.from(divs).slice(1).forEach(div => {
+                    fDiv.innerHTML += div.innerHTML;
+                    div.remove();
+                });
+            }
             
             if(divs.length > 1) {
                 const divArray = Array.from(divs);
@@ -85,6 +93,16 @@ export default function NoteComponent({
                     divs[i].remove();
                 }
             }
+
+            //Empty
+                const hasContent = divs.length > 0 && Array.from(divs).some(div => div.textContent?.trim() !== '');
+                const divsEmpty = !hasContent;
+
+                if (divsEmpty) {
+                    const emptyContent = '<div id="empty-content-">No additional text</div>';
+                    tempDiv.insertAdjacentHTML('beforeend', emptyContent);
+                }
+            //
 
             //Root
             Array.from(tempDiv.childNodes).forEach(c => {

@@ -18,7 +18,6 @@
   overflow-y: auto;
   width: 100%;
   height: 100%;
-  gap: 2rem;
 }
 #--notes-container #---notes-content .notes-list #_note {
   width: 95%;
@@ -26,7 +25,8 @@
 #--notes-container #---notes-content .notes-list #_note #_note-item {
   display: flex;
   align-items: center;
-  height: 150%;
+  width: 100%;
+  height: 5.5rem;
   border-bottom: 0.1rem solid rgb(182, 182, 182);
   /* hover */
 }
@@ -69,6 +69,11 @@
 }
 .note-manager #---note-creator #_note-main #__note-container #___note-content-container #note-content- {
   font-family: 21px;
+}
+
+/* current */
+.current {
+  background-color: rgb(219, 220, 224);
 }
 
 /* note actions */

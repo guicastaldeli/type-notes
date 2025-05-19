@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-import { getNotes, _updateNote, _addNote, initTextOptions, getTextOptions } from "./database";
+import { getNotes, _updateNote, _addNote, initTextOptions, getTextOptions, _deleteNote } from "./database";
 import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
 import SessionManager from "./session-manager";
@@ -128,20 +128,6 @@ export default function NoteManager({
             return;
         }
 
-        //Empty Content
-            const contentEl = /<div[^>]*>/i.test(currentContent);
-
-            if(!contentEl) {
-                const updContent = currentContent + '<div id="empty-content-">No additional text</div>';
-                if(contentRef.current) contentRef.current.innerHTML = updContent;
-
-                setNewNote(prev => ({
-                    ...prev,
-                    content: updContent
-                }));
-            }
-        //
-
         try {
             const finalContent = contentRef.current?.innerHTML || newNote.content;
             const clearContent = DOMPurify.sanitize(finalContent);
@@ -165,14 +151,16 @@ export default function NoteManager({
         if(!editNote) return;
 
         const currentContent = contentRef.current?.innerHTML || editNote.content;
-        const isEmpty = !currentContent.trim() || currentContent.replace(/<br\s*\/?>/gi, '').trim() === ''
+        const isEmpty = !currentContent.trim() || 
+        currentContent.replace(/<br\s*\/?>/gi, '').trim() === '' ||
+        currentContent.includes('id="empty-content-"');
 
-        if(isEmpty && editNote.id) {
+        if(isEmpty) {
             try {
-                if(onDeleteNote) await onDeleteNote(editNote.id);
+                if(editNote.id) await _deleteNote(editNote.id);
                 setEditNote(null);
                 onComplete();
-                return;
+                if(onNotesUpdated) onNotesUpdated();
             } catch(e) {
                 console.error(e);
             }
@@ -293,7 +281,7 @@ export default function NoteManager({
         useEffect(() => {
             if(contentRef.current) {
                 let exContent = isEditing ? editNote?.content || '' : newNote.content;
-                if(exContent.includes('empty-content-')) exContent = exContent.replace(/<div id="empty-content-">No additional text<\/div>/g, '');
+                //if(exContent.includes('empty-content-')) exContent = exContent.replace(/<div id="empty-content-">No additional text<\/div>/g, '');
                 
                 if(contentRef.current.innerHTML !== exContent) {
                     contentRef.current.innerHTML = exContent;
