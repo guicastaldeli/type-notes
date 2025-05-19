@@ -42,6 +42,15 @@
 }
 #--notes-container #---notes-content .notes-list #_note #_note-item #__note-item-content #__note-content #___note-content-el {
   font-size: 18px !important;
+  /* without color */
+  /* colored */
+  /* empty content */
+}
+#--notes-container #---notes-content .notes-list #_note #_note-item #__note-item-content #__note-content #___note-content-el div {
+  color: rgb(142, 142, 142);
+}
+#--notes-container #---notes-content .notes-list #_note #_note-item #__note-item-content #__note-content #___note-content-el div span {
+  filter: grayscale(60%);
 }
 #--notes-container #---notes-content .notes-list #_note #_note-item #__note-item-content #__note-content #___note-content-el #empty-content- {
   font-style: italic;

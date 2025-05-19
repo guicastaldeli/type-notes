@@ -51,7 +51,20 @@
                         #__note-content {
                             #___note-content-el {
                                 font-size: 18px !important;
+
+                                /* without color */
+                                div {
+                                    color: rgb(142, 142, 142);
+                                }
+
+                                /* colored */
+                                div {
+                                    span {
+                                        filter: grayscale(60%);
+                                    }
+                                }
                                 
+                                /* empty content */
                                 #empty-content- {
                                     font-style: italic;
                                     font-size: 0.9rem;
