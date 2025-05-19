@@ -13,6 +13,7 @@ export interface NoteProps {
 
 export interface NoteComponentProps {
     note: NoteProps;
+    isSelected?: boolean;
     currentSession: NoteStatus;
     onUpdateStatus: (id: number, updStatus: NoteStatus) => void;
     onClick?: (e: React.MouseEvent) => void;
@@ -108,6 +109,7 @@ export default function NoteComponent({
     return (
         <div 
             id="_note-item"
+            data-note-id={note.id}
             onClick={(e) => {
                 e.stopPropagation();
                 onClick?.(e);

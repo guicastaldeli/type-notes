@@ -412,9 +412,9 @@ export default function NoteManager({
                 <div 
                     className="note-manager"
                     ref={(el) => {
-                        if(el) {
-                            const activeNoteItem = document.getElementById('_note-item');
-                            activeNoteItem?.classList.add('current');
+                        if(el && editNote) {
+                            const activeNoteItem = document.querySelector(`[data-note-id="${editNote.id}"]`);
+                            if(activeNoteItem) activeNoteItem.classList.add('current');
                         }
                     }}>
                     <div id="---note-creator">

@@ -56,3 +56,21 @@ const addNote = async () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     });
+
+    if(e) {
+                            const activeNoteItems = document.querySelectorAll('#_note-item');
+                            activeNoteItems.forEach(item => {
+                                const id = Number(item.getAttribute('data-note-id'));
+                                
+                                if (!isNaN(id)) {
+                                    console.log(item)
+                                    if (selectedNotes.includes(id)) {
+                                        item.classList.add('current');
+                                    } else {
+                                        item.classList.remove('current');
+                                    }
+                                } else {
+                                    console.log('tst2')
+                                }
+                            });
+                        }
