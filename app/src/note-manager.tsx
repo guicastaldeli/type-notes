@@ -68,6 +68,32 @@ export default function NoteManager({
         if(initialEditNote) setEditNote(initialEditNote);
     }, [initialEditNote]);
 
+    useEffect(() => {
+        if(contentRef.current && (isCreating || isEditing)) {
+            if(contentRef.current.innerHTML !== (editNote?.content || newNote.content)) {
+                contentRef.current.innerHTML = editNote?.content || newNote.content || '';
+            }
+
+            contentRef.current.focus();
+
+            const range = document.createRange();
+            const selection = window.getSelection();
+
+            if(contentRef.current.childNodes.length > 0) {
+                range.selectNodeContents(contentRef.current);
+                range.collapse(false);
+            } else {
+                range.setStart(contentRef.current, 0);
+                range.collapse(true);
+            }
+
+            if(selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    }, [isCreating, isEditing]);
+
     //Load Options
         interface SizeOption { 
             value: string; 
@@ -319,8 +345,8 @@ export default function NoteManager({
 
             if(contentRect) {
                 setToolbarPos({
-                    top: rect.bottom - contentRect.top + 80,
-                    left: rect.left - contentRect.left + 280
+                    top: rect.bottom - contentRect.top + 130,
+                    left: rect.left - contentRect.left + 550
                 });
             }
 
@@ -435,36 +461,38 @@ export default function NoteManager({
                                 </div>
                             </div>
                         )}
-                        <div className="-all-notes-container">
-                            <div
-                                id="--all-notes-content"
-                                style={{ borderTop: notes.some(note => note.isFavorite) ? undefined : '0.1rem solid rgb(182, 182, 182)' }}>
-                                {notes.some(note => note.isFavorite) && 
-                                    <div id="--note-type-container">
-                                        <div id="---note-type-content" className="all">
-                                            <div id="_note-type-handler">
-                                                <div id="__note-type">
-                                                    <p>All Notes</p>
-                                                </div>
-                                                <div 
-                                                    id="__toggle-notes"
-                                                    onClick={() => toggleSection('all')}>
-                                                    <span>{collapsedSection.all ? '+' : '-'}</span>
+                        {notes.length > 0 && (
+                            <div className="-all-notes-container">
+                                <div
+                                    id="--all-notes-content"
+                                    style={{ borderTop: notes.some(note => note.isFavorite) ? undefined : '0.1rem solid rgb(182, 182, 182)' }}>
+                                    {notes.some(note => note.isFavorite) && 
+                                        <div id="--note-type-container">
+                                            <div id="---note-type-content" className="all">
+                                                <div id="_note-type-handler">
+                                                    <div id="__note-type">
+                                                        <p>All Notes</p>
+                                                    </div>
+                                                    <div 
+                                                        id="__toggle-notes"
+                                                        onClick={() => toggleSection('all')}>
+                                                        <span>{collapsedSection.all ? '+' : '-'}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                }
-                                <div 
-                                    id="---all-notes-container-content"
-                                    style={{ display: collapsedSection.all ? 'none' : 'flex' }}>
-                                    {notes
-                                        .filter(note => !note.isFavorite)
-                                        .map(note => renderNote(note))
                                     }
+                                    <div 
+                                        id="---all-notes-container-content"
+                                        style={{ display: collapsedSection.all ? 'none' : 'flex' }}>
+                                        {notes
+                                            .filter(note => !note.isFavorite)
+                                            .map(note => renderNote(note))
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </>
                 ) : (
                     <div className="-notes-container">

@@ -11,7 +11,8 @@ export default function Message() {
         async function check() {
             try {
                 const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
-                setShowMessage(hasViewed == null);
+                const localStorageViewed = localStorage.getItem('has-viewed') === 'true';
+                setShowMessage(hasViewed !== 'true' && !localStorageViewed);
             } catch(e) {
                 console.error('Database error:', e);
                 setShowMessage(!localStorage.getItem('has-viewed'));
@@ -45,11 +46,15 @@ export default function Message() {
                     <div id="__container-text">
                         <div id="___content-text">
                             <p>Welcome to Notes!</p>
-                            <span>This is your first visit. Create your first note by clicking the '+' button.</span>
+                            <span>This is your first visit. Create your first note by clicking the <span id='pb'>+</span> button.</span>
                         </div>
                         <div id="___content-button-container">
                             <div id='content-button-'>
-                                <button onClick={checkBtn}>Got it</button>
+                                <button onClick={checkBtn}>
+                                    <div>
+                                        <span>Got it</span>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
