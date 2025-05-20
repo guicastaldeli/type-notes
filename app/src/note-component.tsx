@@ -9,9 +9,9 @@ export interface NoteProps {
     id: number;
     content: string;
     status: NoteStatus;
-    isFavorite: boolean;
     createdAt: string;
     updatedAt: string;
+    isFavorite: boolean;
 }
 
 export interface NoteComponentProps {

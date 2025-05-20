@@ -42,8 +42,8 @@ $glFont: 'Segoe UI';
                     #__search-bar-content {
                         #input-search-container-content- {
                             #input-search-- {
-                                width: 20rem;
-                                height: 2.7rem;
+                                width: 20vw;
+                                height: 5vh;
 
                                 border: 0.1rem solid rgb(182, 182, 182);
                                 border-radius: 0.5rem;
@@ -94,54 +94,61 @@ $glFont: 'Segoe UI';
                     #_s-content {
                         height: 100%;
 
-                        #__s-content-container {
+                        #_s-handler {
                             position: relative;
                             display: flex;
+                            flex-direction: column;
                             justify-content: center;
-
+                            align-items: center;
+                            
                             width: 100%;
-                            top: 0.5rem;
-
-                            button {
+                            
+                            #__s-content-container {    
                                 width: 95%;
-                                height: 2rem;
-                                border: 0;
-                                border-radius: 0.2rem;
-
-                                font-family: $glFont;
-
-                                text-align: left;
-
-                                /* hover */
-                                &:hover {
-                                    cursor: pointer;
+                                
+                                button {
+                                    width: 100%;
+                                    height: 2.5rem;
+                                    
+                                    border: 0;
+                                    border-radius: 0.2rem;
+    
+                                    font-family: $glFont;
+    
+                                    text-align: left;
+    
+                                    /* hover */
+                                    &:hover {
+                                        cursor: pointer;
+                                    }
                                 }
+    
+                                /* buttons */
+                                    .current {
+                                        background-color: rgb(0, 98, 255);
+                                        color: rgb(255, 255, 255);
+    
+                                        /* hover */
+                                        &:hover {
+                                            background-color: rgb(0, 75, 197);
+                                            transition: background-color 0.13s ease;
+                                        }
+                                    }
+                
+                                    .inactive {
+                                        background-color: rgb(255, 255, 255);
+                                        color: rgb(0, 0, 0);
+    
+                                        /* hover */
+                                        &:hover {
+                                            background-color: rgb(234, 236, 240);
+                                            transition: background-color 0.13s ease;
+                                        }
+                                    }
+                                /* */
                             }
-
-                            /* buttons */
-                                .current {
-                                    background-color: rgb(0, 98, 255);
-                                    color: rgb(255, 255, 255);
-
-                                    /* hover */
-                                    &:hover {
-                                        background-color: rgb(0, 75, 197);
-                                        transition: background-color 0.13s ease;
-                                    }
-                                }
-            
-                                .inactive {
-                                    background-color: rgb(255, 255, 255);
-                                    color: rgb(0, 0, 0);
-
-                                    /* hover */
-                                    &:hover {
-                                        background-color: rgb(234, 236, 240);
-                                        transition: background-color 0.13s ease;
-                                    }
-                                }
-                            /* */
                         }
+
                     }
                 }
             }

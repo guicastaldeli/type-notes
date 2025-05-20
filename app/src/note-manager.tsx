@@ -14,7 +14,6 @@ import NoteComponent from "./note-component";
         showNotes?: boolean;
         currentSession: Session;
         notes: NoteProps[];
-        onToggleFavorite?: (id: number) => Promise<void>;
         onComplete: () => void;
         onCancel: () => void;
         onNoteClick?: (note: NoteProps) => void;
@@ -22,6 +21,7 @@ import NoteComponent from "./note-component";
         editingNote?: NoteProps | null;
         onUpdateStatus?: (id: number, status: Session) => Promise<void>;
         onDeleteNote?: (id: number) => Promise<void>;
+        onToggleFavorite?: (id: number) => Promise<void>;
         isSearching?: boolean;
         isEmptyRes?: boolean;
         searchTerm?: string;
@@ -33,7 +33,6 @@ export default function NoteManager({
     showNotes = false, 
     currentSession,
     notes: propNotes,
-    onToggleFavorite,
     onComplete, 
     onCancel, 
     onNoteClick,
@@ -41,6 +40,7 @@ export default function NoteManager({
     editingNote: initialEditNote,
     onUpdateStatus, 
     onDeleteNote,
+    onToggleFavorite,
     isSearching = false,
     isEmptyRes = false,
     searchTerm = ''
@@ -386,7 +386,7 @@ export default function NoteManager({
                             </span>
                         </div>
                     </div>
-                ) : (
+                ) : currentSession === 'default' ? (
                     <>
                         {notes.some(note => note.isFavorite) && (
                             <div className="-fav-notes-container">
@@ -401,7 +401,7 @@ export default function NoteManager({
                         )}
                         <div className="-all-notes-container">
                             <div id="--all-notes-content">
-                                <p>All Notes</p>
+                                {notes.some(note => note.isFavorite) && <p>All Notes</p>}
                                 {notes
                                     .filter(note => !note.isFavorite)
                                     .map(note => renderNote(note))
@@ -409,6 +409,12 @@ export default function NoteManager({
                             </div>
                         </div>
                     </>
+                ) : (
+                    <div className="-notes-container">
+                        <div id="--notes-content">
+                            {notes.map(note => renderNote(note))}
+                        </div>
+                    </div>
                 )}
             </div>
         )

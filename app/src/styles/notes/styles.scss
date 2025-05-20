@@ -23,17 +23,22 @@
             width: 100%;
             height: 100%;
 
+            .-fav-notes-container, #--fav-notes-content,
             .-all-notes-container, #--all-notes-content,
-            .-fav-notes-container, #--fav-notes-content {
+            .-notes-container, #--notes-content {
                 width: 100%;
             }
         
-            .-fav-notes-container, .-all-notes-container {
+            .-fav-notes-container, 
+            .-all-notes-container,
+            .-notes-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 
-                #--fav-notes-content, #--all-notes-content {
+                #--fav-notes-content, 
+                #--all-notes-content,
+                #--notes-content {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
