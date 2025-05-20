@@ -7,6 +7,7 @@ import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
 import SessionManager from "./session-manager";
 import NoteComponent from "./note-component";
+import useScreenSize from "./screen-resolution";
 
 //Props
     interface NoteManagerProps {
@@ -59,6 +60,7 @@ export default function NoteManager({
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
+    const screenSize = useScreenSize();
 
     useEffect(() => {
         setNotes(propNotes);
@@ -344,9 +346,22 @@ export default function NoteManager({
             const contentRect = contentRef.current?.getBoundingClientRect();
 
             if(contentRect) {
+                let leftPos = rect.left - contentRect.left + 550;
+                let topPos = rect.top - contentRect.top + 150;
+
+                if(screenSize.w > 1600) {
+                    leftPos -= 5;
+                } else if(screenSize.w < 1000) {
+                    leftPos -= 280;
+                    topPos -= 30
+                }
+
+                leftPos = Math.max(10, Math.min(leftPos, screenSize.w - 350));
+                topPos = Math.max(10, Math.min(topPos, screenSize.h - 200));
+
                 setToolbarPos({
-                    top: rect.bottom - contentRect.top + 130,
-                    left: rect.left - contentRect.left + 550
+                    left: leftPos,
+                    top: topPos
                 });
             }
 
@@ -356,7 +371,14 @@ export default function NoteManager({
             setShowSizePicker(isSelected);
             setShowFormatPicker(isSelected);
             setShowColorPicker(isSelected);
-        }, []);
+        }, [screenSize]);
+
+        useEffect(() => {
+            const handleWindowResize = () => { handleTextSelection() }
+
+            window.addEventListener('resize', handleWindowResize);
+            return () => window.removeEventListener('resize', handleWindowResize);
+        }, [handleTextSelection]);
 
         //New Line
             const insertLine = () => {
