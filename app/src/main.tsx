@@ -142,75 +142,81 @@ export default function Main() {
 
   return (
     <div className='main'>
-      <GlobalHeader
-        notes={notes}
-        currentSession={currentSession}
-        onSearch={handleSearch}
-        onClearSearch={handleClearSearch}
-        onSearchTermChange={handleSearchTermChange}
-      />
-
       <div id="-global-container">
-        {/* Bar */}
-        <div id="--bar">
-          <SessionManager
-            currentSession={currentSession}
-            onSessionChange={handleSessionChange}
-            onNotesUpdated={handleNotesUpdated}
-          />
+        <div id='--bar-container'>
+          {/* Bar */}
+          <div id="--bar">
+            <SessionManager
+              currentSession={currentSession}
+              onSessionChange={handleSessionChange}
+              onNotesUpdated={handleNotesUpdated}
+            />
+          </div>
         </div>
 
-        {/* Notes Conteiner */}
-        <div id="--notes-container">
-          <div id="---add-container">
-            <div id="_add-content">
-              <button id='__add-note-btn' onClick={handleAddNote}>
-                <span>+</span>
-              </button>
+        <div id='-main-container'>
+          <GlobalHeader
+            notes={notes}
+            currentSession={currentSession}
+            onSearch={handleSearch}
+            onClearSearch={handleClearSearch}
+            onSearchTermChange={handleSearchTermChange}
+          />
+
+          <div id='--main-note-container'>
+            {/* Notes Conteiner */}
+            <div id="--notes-container">
+              <div id="---add-container">
+                <div id="_add-content">
+                  <button id='__add-note-btn' onClick={handleAddNote}>
+                    <span>+</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div id='---notes-content'>
+                <NoteManager
+                  isCreating={false}
+                  showNotes={true}
+                  currentSession={currentSession}
+                  notes={searchActive ? filteredNotes : notes}
+                  onToggleFavorite={handleToggleFavorite}
+                  onComplete={noteCreated}
+                  onCancel={() => setIsCreating(false)}
+                  onNoteClick={handleNoteClick}
+                  onNotesUpdated={handleNotesUpdated}
+                  onUpdateStatus={handleUpdateStatus}
+                  onDeleteNote={handleDeleteNote}
+                  isSearching={searchState.isSearching}
+                  isEmptyRes={searchState.isEmpty}
+                  searchTerm={searchState.term}
+                  key={Date.now()}
+                />
+              </div>
+            </div>
+            {/* */}
+
+            {/* Info */}
+            <div id="--info">
+              {isCreating || editNote ? (
+                <NoteManager
+                  isCreating={isCreating}
+                  showNotes={false}
+                  currentSession={currentSession}
+                  notes={notes}
+                  onComplete={noteCreated}
+                  onCancel={() => {
+                    setIsCreating(false);
+                    setEditNote(null);
+                  }}
+                  editingNote={editNote}
+                  key={editNote ? editNote.id : 'create'}
+                />
+              ) : (
+                <Message />
+              )}
             </div>
           </div>
-          
-          <div id='---notes-content'>
-            <NoteManager
-              isCreating={false}
-              showNotes={true}
-              currentSession={currentSession}
-              notes={searchActive ? filteredNotes : notes}
-              onToggleFavorite={handleToggleFavorite}
-              onComplete={noteCreated}
-              onCancel={() => setIsCreating(false)}
-              onNoteClick={handleNoteClick}
-              onNotesUpdated={handleNotesUpdated}
-              onUpdateStatus={handleUpdateStatus}
-              onDeleteNote={handleDeleteNote}
-              isSearching={searchState.isSearching}
-              isEmptyRes={searchState.isEmpty}
-              searchTerm={searchState.term}
-              key={Date.now()}
-            />
-          </div>
-        </div>
-        {/* */}
-
-        {/* Info */}
-        <div id="--info">
-          {isCreating || editNote ? (
-            <NoteManager
-              isCreating={isCreating}
-              showNotes={false}
-              currentSession={currentSession}
-              notes={notes}
-              onComplete={noteCreated}
-              onCancel={() => {
-                setIsCreating(false);
-                setEditNote(null);
-              }}
-              editingNote={editNote}
-              key={editNote ? editNote.id : 'create'}
-            />
-          ) : (
-            <Message />
-          )}
         </div>
       </div>
     </div>

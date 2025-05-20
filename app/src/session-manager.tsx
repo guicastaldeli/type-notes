@@ -40,23 +40,33 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
 
     //Main...
     return (
-        <div id='---session-manager'>
-            <div id='_s-content'>
-                <div id='_s-handler'>
-                    {sessions.map((s) => (
-                        <div key={s.id} id='__s-content-container'>
-                            <button
-                                key={s.id}
-                                id={`___button-session-${s.id}${currentSession === s.id ? '-current' : '-inactive'}`}
-                                className={currentSession === s.id ? 'current' : 'inactive'}
-                                onClick={() => onSessionChange(s.id)}
-                            >
-                                <span>
-                                    {s.label}
-                                </span>
-                            </button>
-                        </div>
-                    ))}
+        <div id='---bar-content'>
+            <div id="---logo-container">
+                <div id="_logo-content">
+                    <p>LOGO</p>
+                </div>
+            </div>
+            
+            <div id='---session-manager'>
+                <div id='_s-content'>
+                    <div id='_s-handler'>
+                        {sessions.map((s) => (
+                            <div key={s.id} id='__s-content-container'>
+                                <button
+                                    key={s.id}
+                                    id={`___button-session-${s.id}${currentSession === s.id ? '-current' : '-inactive'}`}
+                                    className={currentSession === s.id ? 'current' : 'inactive'}
+                                    onClick={() => onSessionChange(s.id)}
+                                >
+                                    <div id={`button-label-${s.label.toLowerCase()}-container-`}>
+                                        <span id={`button-label-${s.label.toLowerCase()}-content_`}>
+                                            {s.label}
+                                        </span>
+                                    </div>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

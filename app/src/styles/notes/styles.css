@@ -150,6 +150,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 95%;
   height: 100%;
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content {
@@ -158,6 +159,7 @@
   align-items: center;
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content #___empty-note {
+  color: rgb(142, 142, 142);
   width: 100%;
 }
 

@@ -18,11 +18,7 @@ export default function GlobalHeader({ notes, currentSession, onSearch, onClearS
         <div id="-global-header">
             <div id="--header-content">
                 {/* Logo */}
-                <div id="---logo-container">
-                    <div id="_logo-content">
-                        <p>LOGO</p>
-                    </div>
-                </div>
+
 
                 {/* Search Bar */}
                 <div id="---search-bar-container">
@@ -38,9 +34,6 @@ export default function GlobalHeader({ notes, currentSession, onSearch, onClearS
                         </div>
                     </div>
                 </div>
-
-                {/* info */}
-                <div id='---bar-info'>info</div>
             </div>
         </div>
     )
