@@ -316,10 +316,13 @@ $glFont: 'Segoe UI';
                                 width: 80%;
                                 height: 80%;
 
-                                border: 0.1rem solid rgba(0, 43, 111, 0.614);
+                                border: 0.1rem solid rgba(137, 151, 174, 0.375);
                                 border-radius: 0.3rem;
 
-                                background: linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0));
+                                background: 
+                                    linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0)),
+                                    url(https://grainy-gradients.vercel.app/noise.svg);
+                                filter: contrast(100%) brightness(100%);
 
                                 #__container-text {
                                     display: flex;
