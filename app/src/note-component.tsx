@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import useScreenSize from "./screen-resolution";
 
 const iconSettings = require('./assets/img/settings-icon-img.png');
+const iconActiveSettings = require('./assets/img/settings-icon-img-active.png')
 
 type NoteStatus = 'default' | 'archived' | 'deleted';
 
@@ -176,108 +177,110 @@ export default function NoteComponent({
                     }}>
                     <div id="___icon-container">
                         <div id="icon-content-">
-                            <img id="icon-img--" src={iconSettings} alt="s" />
+                            <img id="icon-img--" src={showActions ? iconActiveSettings : iconSettings} alt="s" />
                         </div>
                     </div>
                     <div
                         id="___note-actions-content"
-                        style={{ display: showActions ? 'block' : 'none' }}>
-                        {/* Default */}
-                        {currentSession === 'default' && (
-                            <div id="___act-session-default">
-                                <div id="container-btn-archive-">
-                                    <button 
-                                        id="btn-archive--" 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onUpdateStatus(note.id, 'archived');
-                                        }}
-                                    >
-                                        Archive
-                                    </button>
+                        style={{ display: showActions ? 'flex' : 'none' }}>
+                        <div id="___note-actions">
+                            {/* Default */}
+                            {currentSession === 'default' && (
+                                <div id="___act-session-default">
+                                    <div id="container-btn-archive-">
+                                        <button 
+                                            id="btn-archive--" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onUpdateStatus(note.id, 'archived');
+                                            }}
+                                        >
+                                            Archive
+                                        </button>
+                                    </div>
+                                    <div id="container-btn-delete-">
+                                        <button 
+                                            id="btn-delete--" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onUpdateStatus(note.id, 'deleted');
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                    <div id="container-btn-favorite-">
+                                        <button 
+                                            id="btn-favorite--"
+                                            onClick={toggleFavorite}
+                                        >
+                                            {note.isFavorite ? 'Unfavorite' : 'Favorite'}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="container-btn-delete-">
-                                    <button 
-                                        id="btn-delete--" 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onUpdateStatus(note.id, 'deleted');
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                                <div id="container-btn-favorite-">
-                                    <button 
-                                        id="btn-favorite--"
-                                        onClick={toggleFavorite}
-                                    >
-                                        {note.isFavorite ? '★' : '☆'}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Archived */}
-                        {currentSession === 'archived' && (
-                            <div id="___act-session-archived">
-                                <div id="container-btn-restore-">
-                                    <button 
-                                        id="btn-restore--" 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onUpdateStatus(note.id, 'default');
-                                        }}
-                                    >
-                                        Restore
-                                    </button>
+                            {/* Archived */}
+                            {currentSession === 'archived' && (
+                                <div id="___act-session-archived">
+                                    <div id="container-btn-restore-">
+                                        <button 
+                                            id="btn-restore--" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onUpdateStatus(note.id, 'default');
+                                            }}
+                                        >
+                                            Restore
+                                        </button>
+                                    </div>
+                                    <div id="container-btn-delete-">
+                                        <button 
+                                            id="btn-delete--" 
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                onUpdateStatus(note.id, 'deleted'); 
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="container-btn-delete-">
-                                    <button 
-                                        id="btn-delete--" 
-                                        onClick={(e) => { 
-                                            e.stopPropagation(); 
-                                            onUpdateStatus(note.id, 'deleted'); 
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Deleted */}
-                        {currentSession === 'deleted' && (
-                            <div id="___act-session-deleted">
-                                <div id="container-btn-restore-">
-                                    <button 
-                                        id="btn-restore--" 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onUpdateStatus(note.id, 'default');
-                                        }}
-                                    >
-                                        Restore
-                                    </button>
+                            {/* Deleted */}
+                            {currentSession === 'deleted' && (
+                                <div id="___act-session-deleted">
+                                    <div id="container-btn-restore-">
+                                        <button 
+                                            id="btn-restore--" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onUpdateStatus(note.id, 'default');
+                                            }}
+                                        >
+                                            Restore
+                                        </button>
+                                    </div>
+                                    <div id="container-btn-delete-perm-">
+                                        <button 
+                                            id="btn-delete-perm" 
+                                            onClick={(e) => {
+                                                e.stopPropagation(); 
+                                                onDelete(note.id);
+                                            }}
+                                        >
+                                            Delete!
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="container-btn-delete-perm-">
-                                    <button 
-                                        id="btn-delete-perm" 
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            onDelete(note.id);
-                                        }}
-                                    >
-                                        Delete!
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Note Info */}
-                        <div id="__note-info">
-                            <div id="__note-info-content">
-                                <span id="___created-info">{formatDate(note.createdAt)}</span>
+                            {/* Note Info */}
+                            <div id="__note-info">
+                                <div id="__note-info-content">
+                                    <span id="___created-info">{formatDate(note.createdAt)}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

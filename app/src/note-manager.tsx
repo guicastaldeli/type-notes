@@ -511,66 +511,68 @@ export default function NoteManager({
                             {showToolbar && (
                                 <div id="__toolbar">
                                     <div id="items">
-                                        <div id="text-custom">
-                                            {/* Size Picker */}
-                                            {showSizePicker && (
-                                                <div id="___size-picker">
-                                                    <select 
-                                                        id="select-size-"
-                                                        onChange={(e) => {
-                                                            const size = Number(e.target.value);
-                                                            setSelectedSize(size);
-                                                            applyTextSize(size, e);
-                                                        }}
-                                                        value={selectedSize}
-                                                    >
-                                                        {textOptions.sizeOptions.map(option => (
-                                                            <option 
-                                                                id="option-size--"
-                                                                key={option.value}
-                                                                value={option.value}
+                                        <div id="-all-items">
+                                            <div id="text-custom">
+                                                {/* Size Picker */}
+                                                {showSizePicker && (
+                                                    <div id="___size-picker">
+                                                        <select 
+                                                            id="select-size-"
+                                                            onChange={(e) => {
+                                                                const size = Number(e.target.value);
+                                                                setSelectedSize(size);
+                                                                applyTextSize(size, e);
+                                                            }}
+                                                            value={selectedSize}
+                                                        >
+                                                            {textOptions.sizeOptions.map(option => (
+                                                                <option 
+                                                                    id="option-size--"
+                                                                    key={option.value}
+                                                                    value={option.value}
+                                                                >
+                                                                    {option.label}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                )}
+
+                                                {/* Format Picker */}
+                                                {showFormatPicker && (
+                                                    <div id='___format-picker'>
+                                                        {textOptions.formatOptions.map((option) => (
+                                                            <button
+                                                                id={`button-option-${option.name}-`}
+                                                                key={option.name}
+                                                                onClick={(e) => applyTextFormat(option.command, e)}
+                                                                title={option.title}
+                                                                style={option.style}
                                                             >
                                                                 {option.label}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            )}
+                                                            </button>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                            {/* Format Picker */}
-                                            {showFormatPicker && (
-                                                <div id='___format-picker'>
-                                                    {textOptions.formatOptions.map((option) => (
-                                                        <button
-                                                            id={`button-option-${option.name}-`}
-                                                            key={option.name}
-                                                            onClick={(e) => applyTextFormat(option.command, e)}
-                                                            title={option.title}
-                                                            style={option.style}
-                                                        >
-                                                            {option.label}
-                                                        </button>
-                                                        )
-                                                    )}
+                                            {/* Color Picker */}
+                                            {showColorPicker && (
+                                                <div id='___color-picker'>
+                                                    {textOptions.colorOptions.map(value => (
+                                                        <div
+                                                            className="color-option-"
+                                                            id={`color-option-${value.value}-`}
+                                                            title={value.name}
+                                                            key={value.value}
+                                                            style={{ backgroundColor: value.value }}
+                                                            onClick={(e) => applyTextColor(value.value, e)}
+                                                        />
+                                                    ))}
                                                 </div>
                                             )}
                                         </div>
-
-                                        {/* Color Picker */}
-                                        {showColorPicker && (
-                                            <div id='___color-picker'>
-                                                {textOptions.colorOptions.map(value => (
-                                                    <div
-                                                        className="color-option-"
-                                                        id={`color-option-${value.value}-`}
-                                                        title={value.name}
-                                                        key={value.value}
-                                                        style={{ backgroundColor: value.value }}
-                                                        onClick={(e) => applyTextColor(value.value, e)}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             )}

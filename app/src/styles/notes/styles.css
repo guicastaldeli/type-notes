@@ -198,7 +198,7 @@
 #--notes-container #---notes-content .notes-list .-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el {
-  margin-left: 0.35rem;
+  margin-left: 0.2rem;
   font-size: 16px !important;
   /* without color */
   /* colored */
@@ -302,13 +302,64 @@
   background-color: rgba(105, 105, 105, 0.22);
 }
 #__note-actions #___icon-container #icon-content- #icon-img-- {
-  width: 50%;
-  height: 25%;
+  width: 1rem;
+  height: 0.5rem;
 }
 #__note-actions #___note-actions-content {
   position: relative;
-  top: 2rem;
-  right: 2rem;
+  justify-content: center;
+  align-items: center;
+  width: 9.5rem;
+  right: 8rem;
+  z-index: 9 !important;
+  background-color: rgb(224, 224, 224);
+  border: 0.1rem solid rgb(161, 161, 161);
+  border-radius: 0.3rem;
+}
+#__note-actions #___note-actions-content #___note-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  width: 90%;
+  height: 8rem;
+}
+#__note-actions #___note-actions-content #___note-actions #___act-session-default,
+#__note-actions #___note-actions-content #___note-actions #___act-session-archived,
+#__note-actions #___note-actions-content #___note-actions #___act-session-deleted {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  width: 100%;
+}
+#__note-actions #___note-actions-content #___note-actions #__note-info {
+  width: 100%;
+}
+#__note-actions #___note-actions-content #___note-actions #__note-info #__note-info-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+#__note-actions #___note-actions-content #___note-actions #__note-info #__note-info-content #___created-info {
+  font-size: 11px;
+  color: rgb(142, 142, 142);
+}
+#__note-actions #___note-actions-content #___note-actions button {
+  width: 100%;
+  height: 1.5rem;
+  font-size: 13px;
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 98, 255);
+  border: 0;
+  border-radius: 0.3rem;
+  /* hover */
+}
+#__note-actions #___note-actions-content #___note-actions button:hover {
+  cursor: pointer;
+  background-color: rgb(0, 76, 197);
+  transition: background-color 0.13s ease;
 }
 
 /* toolbar */
@@ -318,44 +369,90 @@
   width: fit-content;
   justify-content: center;
   align-items: center;
-  width: 5rem;
+  width: 6rem;
   height: 8rem;
-  gap: 2rem;
-  background-color: rgb(155, 155, 155);
+  background-color: rgb(224, 224, 224);
+  border: 0.1rem solid rgb(161, 161, 161);
+  border-radius: 0.3rem;
 }
 #__toolbar #items {
   display: flex;
-  width: -moz-fit-content;
-  width: fit-content;
   justify-content: center;
   align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  height: 100%;
+}
+#__toolbar #items #-all-items {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 90%;
   /* color picker */
 }
-#__toolbar #items #text-custom {
+#__toolbar #items #-all-items #text-custom {
   display: flex;
+  justify-content: center;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   /* size picker */
   /* format picker */
 }
-#__toolbar #items #text-custom #___format-picker {
+#__toolbar #items #-all-items #text-custom button {
+  width: 100%;
+  height: 1.5rem;
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
+  border: 0.1rem solid rgb(169, 169, 169);
+  border-radius: 0.3rem;
+  /* hover */
+}
+#__toolbar #items #-all-items #text-custom button:hover {
+  cursor: pointer;
+  background-color: rgb(224, 224, 224);
+  transition: background-color 0.13s ease;
+}
+#__toolbar #items #-all-items #text-custom #___size-picker #select-size- {
+  outline: none;
+  font-size: 12px;
+  border: 0.1rem solid rgb(169, 169, 169);
+  border-radius: 0.3rem;
+  /* focus */
+}
+#__toolbar #items #-all-items #text-custom #___size-picker #select-size-:focus {
+  border: 0.1rem solid rgb(0, 98, 255);
+}
+#__toolbar #items #-all-items #text-custom #___format-picker {
   display: flex;
   flex-direction: column;
+  gap: 0.1rem;
   /* options */
 }
-#__toolbar #items #text-custom #___format-picker #button-option-bold- {
+#__toolbar #items #-all-items #text-custom #___format-picker #button-option-bold- {
   font-weight: bolder;
 }
-#__toolbar #items #text-custom #___format-picker #--button-option-italic- {
+#__toolbar #items #-all-items #text-custom #___format-picker #--button-option-italic- {
   font-style: italic;
 }
-#__toolbar #items #text-custom #___format-picker #--button-option-underline- {
+#__toolbar #items #-all-items #text-custom #___format-picker #--button-option-underline- {
   text-decoration: underline;
 }
-#__toolbar #items #___color-picker {
+#__toolbar #items #-all-items #___color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
   /* color option */
 }
-#__toolbar #items #___color-picker .color-option- {
-  width: 1.5rem;
+#__toolbar #items #-all-items #___color-picker .color-option- {
+  width: 1.3rem;
   height: 1.5rem;
+  border: 0;
+  border-radius: 0.3rem;
+  /* hover */
+}
+#__toolbar #items #-all-items #___color-picker .color-option-:hover {
+  cursor: pointer;
+  filter: contrast(60%);
+  transition: filter 0.13s ease;
 }/*# sourceMappingURL=styles.css.map */
