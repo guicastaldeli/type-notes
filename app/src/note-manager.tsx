@@ -49,6 +49,7 @@ export default function NoteManager({
     const [newNote, setNewNote] = useState({ title: '', content: '' });
     const [editNote, setEditNote] = useState<NoteProps | null>(initialEditNote || null);
     const [showToolbar, setShowToolbar] = useState(false);
+    const [toolbarPos, setToolbarPos] = useState({ top: 0, left: 0 });
     const [showSizePicker, setShowSizePicker] = useState(false);
     const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
@@ -311,6 +312,18 @@ export default function NoteManager({
                 return;
             }
 
+            const range = selection.getRangeAt(0);
+            savedSelectionRef.current = range;
+            const rect = range.getBoundingClientRect();
+            const contentRect = contentRef.current?.getBoundingClientRect();
+
+            if(contentRect) {
+                setToolbarPos({
+                    top: rect.bottom - contentRect.top + 80,
+                    left: rect.left - contentRect.left + 280
+                });
+            }
+
             savedSelectionRef.current = selection.getRangeAt(0);
             const isSelected = !selection.isCollapsed;
             setShowToolbar(isSelected);
@@ -482,7 +495,9 @@ export default function NoteManager({
                     <div id="---note-creator">
                         <div id="_note-actions">
                             <div id="__note-save-container">
-                                <button onClick={saveHandler}>
+                                <button 
+                                    id="___save-btn"
+                                    onClick={saveHandler}>
                                     { 
                                         (currentSession == 'default' ? 'Home' : '') || 
                                         (currentSession == 'archived' || 'deleted' ? 'Back' : '') 
@@ -509,7 +524,14 @@ export default function NoteManager({
 
                             {/* Toolbar */}
                             {showToolbar && (
-                                <div id="__toolbar">
+                                <div 
+                                    id="__toolbar"
+                                    style={{
+                                        position: 'absolute',
+                                        top: `${toolbarPos.top}px`,
+                                        left: `${toolbarPos.left}px`,
+                                        zIndex: 9
+                                    }}>
                                     <div id="items">
                                         <div id="-all-items">
                                             <div id="text-custom">
@@ -545,8 +567,8 @@ export default function NoteManager({
                                                             <button
                                                                 id={`button-option-${option.name}-`}
                                                                 key={option.name}
-                                                                onClick={(e) => applyTextFormat(option.command, e)}
-                                                                title={option.title}
+                                                                onClick={(e) => applyTextFormat(option.command || option.value, e)}
+                                                                title={option.title || option.value.charAt(0).toUpperCase() + option.value.slice(1)}
                                                                 style={option.style}
                                                             >
                                                                 {option.label}

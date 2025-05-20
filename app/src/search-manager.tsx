@@ -91,6 +91,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
                 <input 
                     type="search"
                     id="input-search--"
+                    title={`Search${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes`}
                     placeholder={`Search for${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes...`}
                     value={searchTerm}
                     onChange={handleSearchChange} 

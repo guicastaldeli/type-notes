@@ -168,7 +168,10 @@ export default function Main() {
             <div id="--notes-container">
               <div id="---add-container">
                 <div id="_add-content">
-                  <button id='__add-note-btn' onClick={handleAddNote}>
+                  <button 
+                    id='__add-note-btn'
+                    title='Add Note'
+                    onClick={handleAddNote}>
                     <span>+</span>
                   </button>
                 </div>

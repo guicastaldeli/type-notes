@@ -6,6 +6,16 @@
   min-height: 0;
   gap: 0.5rem;
 }
+#--notes-container #_note-item #__note-content #___note-content-el,
+#--notes-container #_note-item #__note-content #___note-content-el * {
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+}
+#--notes-container #_note-item #__note-content #___note-content-el div,
+#--notes-container #_note-item #__note-content #___note-content-el p,
+#--notes-container #_note-item #__note-content #___note-content-el span {
+  font-size: inherit !important;
+}
 #--notes-container #---notes-content {
   overflow-y: auto;
   width: 100%;
@@ -189,6 +199,17 @@
   justify-content: space-between;
   width: 98%;
 }
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content,
+#--notes-container #---notes-content .notes-list .-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content {
+  cursor: default;
+}
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
@@ -199,7 +220,6 @@
 #--notes-container #---notes-content .notes-list .-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el {
   margin-left: 0.2rem;
-  font-size: 16px !important;
   /* without color */
   /* colored */
   /* empty content */
@@ -265,14 +285,6 @@
   width: 100%;
   font-size: clamp(10px, 2vw, 16px) !important;
   color: rgb(142, 142, 142);
-}
-
-/* manager */
-.note-manager #---note-creator #_note-main #__note-container {
-  border: 0.1rem solid black;
-}
-.note-manager #---note-creator #_note-main #__note-container #___note-content-container #note-content- {
-  font-family: 21px;
 }
 
 /* current */

@@ -164,7 +164,6 @@ export default function NoteComponent({
                 <div id="__note-content">
                     <div 
                         id="___note-content-el"
-                        style={{ fontSize: '21px' }} 
                         dangerouslySetInnerHTML={{ __html: wrappedContent }} 
                     />
                 </div>

@@ -7,6 +7,18 @@
 
     gap: 0.5rem;
 
+    #_note-item #__note-content #___note-content-el,
+    #_note-item #__note-content #___note-content-el * {
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+    }
+    
+    #_note-item #__note-content #___note-content-el div,
+    #_note-item #__note-content #___note-content-el p,
+    #_note-item #__note-content #___note-content-el span {
+        font-size: inherit !important;
+    }
+
     #---notes-content { 
         overflow-y: auto;
     
@@ -165,9 +177,10 @@
                                 width: 98%;
         
                                 #__note-content {
+                                    cursor: default;
+                                    
                                     #___note-content-el {
                                         margin-left: 0.2rem;
-                                        font-size: 16px !important;
         
                                         /* without color */
                                         div {
@@ -225,23 +238,6 @@
                         font-size: clamp(10px, 2vw, 16px) !important;
 
                         color: rgb(142, 142, 142);
-                    }
-                }
-            }
-        }
-    }
-}
-
-/* manager */
-.note-manager {
-    #---note-creator {
-        #_note-main {
-            #__note-container {
-                border: 0.1rem solid black;
-
-                #___note-content-container {
-                    #note-content- {
-                        font-family: 21px;
                     }
                 }
             }

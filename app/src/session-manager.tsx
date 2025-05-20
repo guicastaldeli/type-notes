@@ -38,10 +38,17 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
         }
     }
 
+    const backHome = () => {
+        onSessionChange('default');
+    }
+
     //Main...
     return (
         <div id='---bar-content'>
-            <div id="---logo-container">
+            <div 
+                id="---logo-container"
+                title="Home"
+                onClick={() => backHome()}>
                 <div id="_logo-content">
                     <p>LOGO</p>
                 </div>
@@ -54,6 +61,7 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                             <div key={s.id} id='__s-content-container'>
                                 <button
                                     key={s.id}
+                                    title={s.label}
                                     id={`___button-session-${s.id}${currentSession === s.id ? '-current' : '-inactive'}`}
                                     className={currentSession === s.id ? 'current' : 'inactive'}
                                     onClick={() => onSessionChange(s.id)}
