@@ -14,6 +14,7 @@ import NoteComponent from "./note-component";
         showNotes?: boolean;
         currentSession: Session;
         notes: NoteProps[];
+        onToggleFavorite?: (id: number) => Promise<void>;
         onComplete: () => void;
         onCancel: () => void;
         onNoteClick?: (note: NoteProps) => void;
@@ -32,6 +33,7 @@ export default function NoteManager({
     showNotes = false, 
     currentSession,
     notes: propNotes,
+    onToggleFavorite,
     onComplete, 
     onCancel, 
     onNoteClick,
@@ -347,6 +349,32 @@ export default function NoteManager({
     //
     
     //Note List
+    const renderNote = (note: NoteProps) => (
+        <div
+            id="_note"
+            key={note.id}
+            ref={(el) => { if(el) noteRef.current[note.id] = el; }}>
+            <NoteComponent
+                key={`note-${note.id}`}
+                note={note}
+                currentSession={currentSession}
+                onUpdateStatus={(id, updStatus) => {
+                    const ec = document.querySelector('#note-content-.edit');
+                    if(onUpdateStatus) onUpdateStatus(id, updStatus);
+                    if(ec) onComplete();
+                }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                                            
+                    if(onNoteClick) onNoteClick(note);
+                    setEditNote(note);
+                }}
+                onDelete={onDeleteNote || (() => Promise.resolve())}
+                onToggleFavorite={onToggleFavorite}
+            />
+        </div>
+    )
+
     if(showNotes) {
         return (
             <div className="notes-list">
@@ -359,30 +387,28 @@ export default function NoteManager({
                         </div>
                     </div>
                 ) : (
-                    notes.map((note) => (
-                        <div
-                            id="_note"
-                            key={note.id}
-                            ref={(el) => { if(el) noteRef.current[note.id] = el; }}>
-                            <NoteComponent
-                                key={`note-${note.id}`}
-                                note={note}
-                                currentSession={currentSession}
-                                onUpdateStatus={(id, updStatus) => {
-                                    const ec = document.querySelector('#note-content-.edit');
-                                    if(onUpdateStatus) onUpdateStatus(id, updStatus);
-                                    if(ec) onComplete();
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    
-                                    if(onNoteClick) onNoteClick(note);
-                                    setEditNote(note);
-                                }}
-                                onDelete={onDeleteNote || (() => Promise.resolve())}
-                            />
+                    <>
+                        {notes.some(note => note.isFavorite) && (
+                            <div className="-fav-notes-container">
+                                <p>Fav Notes</p>
+                                <div id="--fav-notes-content">
+                                    {notes
+                                        .filter(note => note.isFavorite)
+                                        .map(note => renderNote(note))
+                                    }
+                                </div>
+                            </div>
+                        )}
+                        <div className="-all-notes-container">
+                            <div id="--all-notes-content">
+                                <p>All Notes</p>
+                                {notes
+                                    .filter(note => !note.isFavorite)
+                                    .map(note => renderNote(note))
+                                }
+                            </div>
                         </div>
-                    ))
+                    </>
                 )}
             </div>
         )

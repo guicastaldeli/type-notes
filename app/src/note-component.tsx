@@ -9,6 +9,7 @@ export interface NoteProps {
     id: number;
     content: string;
     status: NoteStatus;
+    isFavorite: boolean;
     createdAt: string;
     updatedAt: string;
 }
@@ -20,6 +21,7 @@ export interface NoteComponentProps {
     onUpdateStatus: (id: number, updStatus: NoteStatus) => void;
     onClick?: (e: React.MouseEvent) => void;
     onDelete: (id: number) => void;
+    onToggleFavorite?: (id: number) => void;
 }
 
 function formatDate(dateString: string): string {
@@ -37,6 +39,7 @@ export default function NoteComponent({
     onUpdateStatus,
     onClick, 
     onDelete,
+    onToggleFavorite,
     }: NoteComponentProps) {
     const [showActions, setShowActions] = useState(false);
     const { w } = useScreenSize();
@@ -74,6 +77,12 @@ export default function NoteComponent({
         }
 
         return remLength;
+    }
+
+    //Favorite
+    const toggleFavorite = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if(onToggleFavorite) onToggleFavorite(note.id);
     }
 
     const processContent = (content: string) => {
@@ -189,6 +198,14 @@ export default function NoteComponent({
                                         }}
                                     >
                                         Delete
+                                    </button>
+                                </div>
+                                <div id="container-btn-favorite-">
+                                    <button 
+                                        id="btn-favorite--"
+                                        onClick={toggleFavorite}
+                                    >
+                                        {note.isFavorite ? '★' : '☆'}
                                     </button>
                                 </div>
                             </div>

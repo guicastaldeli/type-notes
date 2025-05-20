@@ -18,6 +18,14 @@ export async function setDB(): Promise<Database> {
                 const parsed = JSON.parse(savedDb);
                 const binaryArray = new Uint8Array(parsed.data);
                 dbInstance = new SQL.Database(binaryArray);
+
+                const colums = dbInstance.exec('PRAGMA table_info(notes)');
+                const hasFavoriteColumn = colums[0].values.some((col: any) => col[1] === 'is_favorite');
+
+                if(!hasFavoriteColumn) {
+                    dbInstance.exec('ALTER TABLE notes ADD COLUMN is_favorite INTEGER DEFAULT 0');
+                    saveDB(dbInstance);
+                }
             } catch(e) {
                 console.error('Failed to load database', e);
                 dbInstance = new SQL.Database();
@@ -32,6 +40,7 @@ export async function setDB(): Promise<Database> {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
             status TEXT DEFAULT 'default',
+            is_favorite INTEGER DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
@@ -103,13 +112,16 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
 //Notes
     export async function getNotes(status: string): Promise<any[]> {
         return initDB(db => {
-            const stmt = db.prepare('SELECT * FROM notes WHERE status = ? ORDER BY created_at DESC');
+            const stmt = db.prepare('SELECT * FROM notes WHERE status = ? ORDER BY is_favorite DESC, created_at DESC');
             stmt.bind([status]);
             const notes = [];
             while(stmt.step()) {
                 const note = stmt.getAsObject();
+
+                note.isFavorite = note.is_favorite;
                 note.createdAt = convertDate(note.created_at?.toString());
                 note.updatedAt = convertDate(note.updated_at?.toString());
+                
                 notes.push(note);
             };
             
@@ -341,6 +353,37 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
         });
     }
 //
+
+//Favorite Note
+export async function toggleFavoriteNote(id: number): Promise<void> {
+    return initDB(db => {
+        try {
+            const now = new Date().toISOString();
+
+            db.run('UPDATE notes SET is_favorite = NOT is_favorite, updated_at = ? WHERE id = ?',
+            [now, id]);
+        } catch(e) {
+            console.error(e);
+            throw e;
+        }
+    });
+}
+
+export async function getFavoriteNotes(): Promise<any[]> {
+    return initDB(db => {
+        const stmt = db.prepare('SELECT * FROM notes WHERE is_favorite = 1 AND status = "default" ORDER BY created_at DESC');
+        const notes = [];
+        while(stmt.step()) {
+            const note = stmt.getAsObject();
+            note.createdAt = convertDate(note.created_at?.toString());
+            note.updatedAt = convertDate(note.updated_at?.toString());
+            notes.push(note);
+        }
+
+        stmt.free();
+        return notes;
+    })
+}
 
 //Search Notes
 export async function searchNotes(searchTerm: string, status?: string): Promise<any[]> {

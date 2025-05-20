@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback  } from 'react';
 
 import { NoteProps } from './note-component';
 import { Session } from './session-manager';
-import { _deleteNote, _updateNoteStatus, getNotes } from './database';
+import { _deleteNote, _updateNoteStatus, getNotes, toggleFavoriteNote } from './database';
 import Message from './helloworld';
 import SessionManager from './session-manager';
 import GlobalHeader from './global-header';
@@ -129,33 +129,14 @@ export default function Main() {
     }, []);
   //
 
-  //Resize
-    const [panelWidths, setPanelWidths] = useState({
-      bar: 8,
-      notes: 20,
-      info: 72
-    });
-
-    const handleResize = (panel: 'bar' | 'notes', newWidth: number) => {
-      const totalWidth = panel === 'bar'
-      ? newWidth + panelWidths.notes + panelWidths.info
-      : panelWidths.bar + newWidth + panelWidths.info;
-
-      const barPercent = panel === 'bar'
-      ? (newWidth / totalWidth) * 100
-      : (panelWidths.bar / totalWidth) * 100;
-
-      const notesPercent = panel === 'notes'
-      ? (newWidth / totalWidth) * 100
-      : (panelWidths.notes / totalWidth) * 100;
-
-      const infoPercent = 100 - barPercent - notesPercent;
-
-      setPanelWidths({
-        bar: barPercent,
-        notes: notesPercent,
-        info: infoPercent
-      });
+  //Favorite
+    const handleToggleFavorite = async(id: number) => {
+      try {
+        await toggleFavoriteNote(id);
+        loadNotes();
+      } catch(e) {
+        console.error(e);
+      }
     }
   //
 
@@ -195,6 +176,7 @@ export default function Main() {
               showNotes={true}
               currentSession={currentSession}
               notes={searchActive ? filteredNotes : notes}
+              onToggleFavorite={handleToggleFavorite}
               onComplete={noteCreated}
               onCancel={() => setIsCreating(false)}
               onNoteClick={handleNoteClick}
