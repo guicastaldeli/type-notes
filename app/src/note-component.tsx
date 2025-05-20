@@ -3,6 +3,8 @@ import { useState } from 'react';
 import DOMPurify from "dompurify";
 import useScreenSize from "./screen-resolution";
 
+const iconSettings = require('./assets/img/settings-icon-img.png');
+
 type NoteStatus = 'default' | 'archived' | 'deleted';
 
 export interface NoteProps {    
@@ -172,6 +174,11 @@ export default function NoteComponent({
                         e.stopPropagation();
                         setShowActions(!showActions);
                     }}>
+                    <div id="___icon-container">
+                        <div id="icon-content-">
+                            <img id="icon-img--" src={iconSettings} alt="s" />
+                        </div>
+                    </div>
                     <div
                         id="___note-actions-content"
                         style={{ display: showActions ? 'block' : 'none' }}>

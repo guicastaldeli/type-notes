@@ -126,11 +126,13 @@
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::-moz-placeholder {
   position: relative;
   top: -0.05rem;
+  font-size: clamp(10px, 1vw, 16px) !important;
   color: rgb(105, 105, 105);
 }
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::placeholder {
   position: relative;
   top: -0.05rem;
+  font-size: clamp(10px, 1vw, 16px) !important;
   color: rgb(105, 105, 105);
 }
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--:focus {
@@ -142,6 +144,8 @@
 }
 .main #-global-container #-main-container #--main-note-container {
   display: flex;
+  flex: 1;
+  min-height: 0;
   height: 100%;
   /* notes container */
   /* info */

@@ -4,9 +4,9 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  gap: 0.5rem;
 }
 #--notes-container #---notes-content {
-  cursor: default;
   overflow-y: auto;
   width: 100%;
   height: 100%;
@@ -18,11 +18,27 @@
   overflow-y: auto;
   width: 100%;
   height: 100%;
+  gap: 0.5rem;
 }
 #--notes-container #---notes-content .notes-list .-fav-notes-container, #--notes-container #---notes-content .notes-list #--fav-notes-content,
-#--notes-container #---notes-content .notes-list .-all-notes-container, #--notes-container #---notes-content .notes-list #--all-notes-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container,
 #--notes-container #---notes-content .notes-list .-notes-container, #--notes-container #---notes-content .notes-list #--notes-content {
   width: 100%;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container, #--notes-container #---notes-content .notes-list #--all-notes-content {
+  gap: 0.3rem;
+}
+#--notes-container #---notes-content .notes-list #--all-notes-content {
+  width: 95%;
+}
+#--notes-container #---notes-content .notes-list #--all-notes-content #_note {
+  width: 100% !important;
+}
+#--notes-container #---notes-content .notes-list .fav {
+  width: 95% !important;
+}
+#--notes-container #---notes-content .notes-list .all {
+  width: 100% !important;
 }
 #--notes-container #---notes-content .notes-list .-fav-notes-container,
 #--notes-container #---notes-content .notes-list .-all-notes-container,
@@ -30,6 +46,81 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 2rem;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  border: 0;
+  border-radius: 0.3rem;
+  background-color: rgb(224, 224, 224);
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  height: 100%;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler p, #--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler span,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler p,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler span,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler p,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler span {
+  color: rgb(105, 105, 105);
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler p,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler p,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler p {
+  margin: 0;
+  margin-left: 0.3rem;
+  font-size: 13px;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler span,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler span,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler span {
+  margin: 0;
+  font-size: 13px;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8%;
+  height: 75%;
+  border: 0;
+  border-radius: 0.3rem;
+  /* hover */
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes:hover,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes:hover,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__toggle-notes:hover {
+  cursor: pointer;
+  background-color: rgba(105, 105, 105, 0.22);
+  transition: background-color 0.13s ease;
 }
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--fav-notes-content,
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--all-notes-content,
@@ -65,6 +156,7 @@
 #--notes-container #---notes-content .notes-list .-notes-container #--all-notes-content #_note #_note-item,
 #--notes-container #---notes-content .notes-list .-notes-container #--notes-content #_note #_note-item {
   display: flex;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 5.5rem;
@@ -95,7 +187,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: 98%;
 }
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-fav-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
@@ -106,7 +198,8 @@
 #--notes-container #---notes-content .notes-list .-notes-container #--fav-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-notes-container #--all-notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el,
 #--notes-container #---notes-content .notes-list .-notes-container #--notes-content #_note #_note-item #__note-item-content #__note-content #___note-content-el {
-  font-size: 18px !important;
+  margin-left: 0.35rem;
+  font-size: 16px !important;
   /* without color */
   /* colored */
   /* empty content */
@@ -146,21 +239,32 @@
   font-size: 0.9rem;
   color: rgb(142, 142, 142);
 }
+#--notes-container #---notes-content .notes-list .-fav-notes-container #---all-notes-container-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #---all-notes-container-content,
+#--notes-container #---notes-content .notes-list .-notes-container #---all-notes-container-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 #--notes-container #---notes-content .notes-list #_empty-note-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 95%;
+  width: 100%;
   height: 100%;
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 90% !important;
 }
 #--notes-container #---notes-content .notes-list #_empty-note-container #__empty-note-content #___empty-note {
-  color: rgb(142, 142, 142);
+  word-wrap: break-word;
+  text-align: center;
   width: 100%;
+  font-size: clamp(10px, 2vw, 16px) !important;
+  color: rgb(142, 142, 142);
 }
 
 /* manager */
@@ -180,7 +284,26 @@
 #__note-actions {
   width: 2rem;
   height: 2rem;
-  background-color: black;
+}
+#__note-actions #___icon-container {
+  width: 100%;
+  height: 100%;
+}
+#__note-actions #___icon-container #icon-content- {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.3rem;
+}
+#__note-actions #___icon-container #icon-content-:hover {
+  cursor: pointer;
+  background-color: rgba(105, 105, 105, 0.22);
+}
+#__note-actions #___icon-container #icon-content- #icon-img-- {
+  width: 50%;
+  height: 25%;
 }
 #__note-actions #___note-actions-content {
   position: relative;

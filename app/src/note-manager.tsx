@@ -54,6 +54,7 @@ export default function NoteManager({
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const noteRef = useRef<Record<number, HTMLDivElement>>({});
+    const [collapsedSection, setCollapsedSection] = useState<{[key: string]: boolean}>({ fav: false, all: false });
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -375,6 +376,13 @@ export default function NoteManager({
         </div>
     )
 
+    const toggleSection = (section: 'fav' | 'all') => {
+        setCollapsedSection(prev => ({
+            ...prev,
+            [section]: !prev[section]
+        }));
+    }
+
     if(showNotes) {
         return (
             <div className="notes-list">
@@ -390,8 +398,23 @@ export default function NoteManager({
                     <>
                         {notes.some(note => note.isFavorite) && (
                             <div className="-fav-notes-container">
-                                <p>Fav Notes</p>
-                                <div id="--fav-notes-content">
+                                <div id="--note-type-container">
+                                    <div id="---note-type-content" className="fav">
+                                        <div id="_note-type-handler">
+                                            <div id="__note-type">
+                                                <p>Favorite Notes</p>
+                                            </div>
+                                            <div 
+                                                id="__toggle-notes"
+                                                onClick={() => toggleSection('fav')}>
+                                                <span>{collapsedSection.fav ? '+' : '-'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div 
+                                    id="--fav-notes-content"
+                                    style={{ display: collapsedSection.fav ? 'none' : 'flex' }}>
                                     {notes
                                         .filter(note => note.isFavorite)
                                         .map(note => renderNote(note))
@@ -400,12 +423,33 @@ export default function NoteManager({
                             </div>
                         )}
                         <div className="-all-notes-container">
-                            <div id="--all-notes-content">
-                                {notes.some(note => note.isFavorite) && <p>All Notes</p>}
-                                {notes
-                                    .filter(note => !note.isFavorite)
-                                    .map(note => renderNote(note))
+                            <div
+                                id="--all-notes-content"
+                                style={{ borderTop: notes.some(note => note.isFavorite) ? undefined : '0.1rem solid rgb(182, 182, 182)' }}>
+                                {notes.some(note => note.isFavorite) && 
+                                    <div id="--note-type-container">
+                                        <div id="---note-type-content" className="all">
+                                            <div id="_note-type-handler">
+                                                <div id="__note-type">
+                                                    <p>All Notes</p>
+                                                </div>
+                                                <div 
+                                                    id="__toggle-notes"
+                                                    onClick={() => toggleSection('all')}>
+                                                    <span>{collapsedSection.all ? '+' : '-'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 }
+                                <div 
+                                    id="---all-notes-container-content"
+                                    style={{ display: collapsedSection.all ? 'none' : 'flex' }}>
+                                    {notes
+                                        .filter(note => !note.isFavorite)
+                                        .map(note => renderNote(note))
+                                    }
+                                </div>
                             </div>
                         </div>
                     </>
