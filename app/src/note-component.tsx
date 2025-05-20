@@ -269,7 +269,7 @@ export default function NoteComponent({
                                                 onDelete(note.id);
                                             }}
                                         >
-                                            Delete!
+                                            Delete
                                         </button>
                                     </div>
                                 </div>
