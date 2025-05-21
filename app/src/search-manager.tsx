@@ -4,6 +4,8 @@ import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
 import { searchNotes } from "./database";
 
+import searchIcon from './assets/img/search-icon.svg';
+
 interface SearchManagerProps {
     notes: NoteProps[];
     currentSession: Session;
@@ -88,14 +90,24 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     return (
         <>
             <div id="input-search-container-content-">
-                <input 
-                    type="search"
-                    id="input-search--"
-                    title={`Search${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes`}
-                    placeholder={`Search for${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes...`}
-                    value={searchTerm}
-                    onChange={handleSearchChange} 
-                />
+                <div id="serch-icon-content--">
+                    <div id="search-icon---">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(105, 105, 105)" className="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="input-search-content--">
+                    <input 
+                        type="search"
+                        id="input-search--"
+                        title={`Search${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes`}
+                        placeholder={`Search for${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes...`}
+                        value={searchTerm}
+                        onChange={handleSearchChange} 
+                    />
+                </div>
             </div>
 
             {/* Loading */}

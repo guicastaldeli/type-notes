@@ -9,6 +9,8 @@ import SessionManager from "./session-manager";
 import NoteComponent from "./note-component";
 import useScreenSize from "./screen-resolution";
 
+const saveBtnIcon = require('./assets/img/back-icon-img.png');
+
 //Props
     interface NoteManagerProps {
         isCreating: boolean;
@@ -545,9 +547,13 @@ export default function NoteManager({
                     <div id="---note-creator">
                         <div id="_note-actions">
                             <div id="__note-save-container">
-                                <button 
+                                <button
                                     id="___save-btn"
-                                    onClick={saveHandler}>
+                                    onClick={saveHandler}
+                                >
+                                    <div id="save-btn-icon-content-">
+                                        <img id="save-btn-icon--" src={saveBtnIcon} alt="back" />
+                                    </div>
                                     { 
                                         (currentSession == 'default' ? 'Home' : '') || 
                                         (currentSession == 'archived' || 'deleted' ? 'Back' : '') 

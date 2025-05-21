@@ -1,6 +1,17 @@
 import React from 'react';
+import { FC, SVGProps } from 'react';
 import { _updateNoteStatus, _deleteNote } from './database';
 import { NoteProps } from './note-component';
+
+//Icons
+import imgLogo from './assets/img/logo.png';
+
+import activeHomeIcon from './assets/img/active-home-icon.svg';
+import homeIcon from './assets/img/home-icon.svg';
+import activeArchiveIcon from './assets/img/active-archive-icon.svg';
+import archiveIcon from './assets/img/archive-icon.svg';
+import activeDeletedIcon from './assets/img/active-deleted-icon.svg';
+import deletedIcon from './assets/img/deleted-icon.svg';
 
 import './styles/main/styles.scss';
 
@@ -12,12 +23,33 @@ interface SessionManagerProps {
     onNotesUpdated: () => void;
 }
 
+interface IntProps {
+    id: Session;
+    label: string;
+    activeIcon: FC<SVGProps<SVGSVGElement>>;
+    icon: FC<SVGProps<SVGSVGElement>>;
+}
+
 export default function SessionManager({ currentSession, onSessionChange, onNotesUpdated }: SessionManagerProps) {
-    const sessions: 
-        { id: Session; label: string; icon?: string }[] = [
-        { id: 'default', label: 'All Notes' },
-        { id: 'archived', label: 'Archived Notes' },
-        { id: 'deleted', label: 'Deleted Notes' }
+    const sessions: IntProps[] = [
+        { 
+            id: 'default', 
+            label: 'All Notes',
+            activeIcon: activeHomeIcon,
+            icon: homeIcon
+        },
+        { 
+            id: 'archived', 
+            label: 'Archived Notes',
+            activeIcon: activeArchiveIcon,
+            icon: archiveIcon
+        },
+        { 
+            id: 'deleted', 
+            label: 'Deleted Notes',
+            activeIcon: activeDeletedIcon,
+            icon: deletedIcon
+        }
     ];
 
     const updateNoteStatus = async(id: number, updStatus: Session) => {
@@ -50,7 +82,9 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                 title="Home"
                 onClick={() => backHome()}>
                 <div id="_logo-content">
-                    <p>LOGO</p>
+                    <div id='__logo-handler'>
+                        <img id='___logo' src={imgLogo} alt="logo" />
+                    </div>
                 </div>
             </div>
             
@@ -66,6 +100,21 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                                     className={currentSession === s.id ? 'current' : 'inactive'}
                                     onClick={() => onSessionChange(s.id)}
                                 >
+                                    <div id={`button-icon-${s.label.toLowerCase()}-container-${currentSession === s.id ? 'current' : 'inactive'}-`}>
+                                        {currentSession === s.id ? (
+                                            <s.activeIcon
+                                                id={`icon-${s.label.toLowerCase()}-${currentSession === s.id ? 'current' : 'inactive'}---`}
+                                                role='img'
+    
+                                            />
+                                        ) : (
+                                            <s.icon
+                                                id={`icon-${s.label.toLowerCase()}-${currentSession === s.id ? 'current' : 'inactive'}---`}
+                                                role='img'
+                                            />
+                                        )}
+                                    </div>
+
                                     <div id={`button-label-${s.label.toLowerCase()}-container-`}>
                                         <span id={`button-label-${s.label.toLowerCase()}-content_`}>
                                             {s.label}

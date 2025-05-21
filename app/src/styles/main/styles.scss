@@ -34,10 +34,13 @@ $glFont: 'Segoe UI';
 
             #--bar-container {
                 width: 10%;
+
                 border-right: 0.1rem solid rgb(182, 182, 182);
 
                 /* bar */
                 #--bar {
+                    position: relative;
+                    margin-top: 0.5rem;
                     width: 100%;
     
                     #---bar-content {
@@ -58,6 +61,25 @@ $glFont: 'Segoe UI';
                             &:hover {
                                 cursor: pointer;
                             }
+
+                            #_logo-content {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                width: 100%;
+                                height: 100%;
+
+                                #__logo-handler {
+                                    width: 50%;
+                                    height: 50%;
+
+                                    #___logo {
+                                        width: 100%;
+                                        height: 100%;
+                                    }
+                                }
+                            }
                         }
 
                         #---session-manager {
@@ -77,12 +99,15 @@ $glFont: 'Segoe UI';
                                     width: 100%;
                                     height: 100%;
                                     
-                                    #__s-content-container {    
+                                    #__s-content-container {
                                         width: 95%;
                                         height: 2.5rem;
                                         
                                         /* buttons */
                                             button {
+                                                display: flex;
+                                                justify-content: start;
+                                                align-items: center;
                                                 width: 100%;
                                                 height: 100%;
                                                 
@@ -151,51 +176,90 @@ $glFont: 'Segoe UI';
     
                     /* search bar */
                     #---search-bar-container {
+                        width: 25%;
+
                         #_search-bar-content-container {
+                            width: 100%;
+                            height: 100%;
+
                             #__search-bar-content {
+                                width: 100%;
+                                height: 100%;
+                                
                                 #input-search-container-content- {
-                                    #input-search-- {
-                                        width: 20vw;
-                                        height: 5vh;
+                                    display: flex;
 
-                                        border: 0.1rem solid rgb(182, 182, 182);
-                                        border-radius: 0.5rem;
+                                    width: 100%;
+                                    height: 100%;
 
-                                        padding-left: 1rem;
+                                    border: 0.1rem solid rgb(182, 182, 182);
+                                    border-radius: 0.5rem;
 
-                                        /* placeholder */
-                                        &::placeholder {
+                                    &:focus-within {
+                                        outline: none;
+                                        border: 0.1rem solid rgb(0, 98, 255);
+                                    }
+
+                                    #serch-icon-content-- {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+
+                                        width: 100%;
+
+                                        #search-icon--- {
+                                            transform: scale(1.2);
                                             position: relative;
-                                            top: -0.05rem;
 
-                                            font-size: clamp(10px, 1vw, 16px) !important;
-
-                                            color: rgb(105, 105, 105);
+                                            margin-top: 0.2rem;
+                                            margin-left: 0.5rem;
                                         }
+                                    }
 
-                                        /* focus */
-                                        &:focus {
-                                            outline: none;
-                                            border: 0.1rem solid rgb(0, 98, 255);
-                                        }
-
-                                        &::-webkit-search-cancel-button {
-                                            cursor: pointer;
-
-                                            -webkit-appearance: none;
-                                            appearance: none;
-                                            width: 1em;
-                                            height: 1em;
-                                            background-color: rgb(105, 105, 105);
-                                            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
-                                            -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
-                                            mask-size: contain;
-                                            -webkit-mask-size: contain;
-
-                                            /* hover */
-                                            &:hover {
-                                                background-color: rgb(52, 52, 52);
-                                                transition: background-color 0.13s ease;
+                                    #input-search-content-- {
+                                        #input-search-- {
+                                            width: 20vw;
+                                            height: 5vh;
+    
+                                            border: 0.1rem solid transparent;
+                                            border-radius: 0.5rem;
+    
+                                            padding-left: 1rem;
+    
+                                            /* placeholder */
+                                            &::placeholder {
+                                                position: relative;
+                                                top: -0.05rem;
+    
+                                                font-size: clamp(10px, 1vw, 16px) !important;
+    
+                                                color: rgb(105, 105, 105);
+                                            }
+    
+                                            /* focus */
+                                            &:focus {
+                                                outline: none;
+                                                border: 0.1rem solid transparent;
+                                            }
+    
+                                            &::-webkit-search-cancel-button {
+                                                cursor: pointer;
+    
+                                                -webkit-appearance: none;
+                                                appearance: none;
+                                                width: 1em;
+                                                height: 1em;
+                                                background-color: rgb(105, 105, 105);
+                                                mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+                                                -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+                                                mask-size: contain;
+                                                -webkit-mask-size: contain;
+    
+                                                /* hover */
+                                                &:hover {
+                                                    background-color: rgb(52, 52, 52);
+                                                    transition: background-color 0.13s ease;
+                                                }
                                             }
                                         }
                                     }
@@ -410,6 +474,9 @@ $glFont: 'Segoe UI';
                             #_note-actions {
                                 #__note-save-container {
                                     #___save-btn {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
                                         margin: 0.15rem;
                                         width: 10%;
                                         height: 2rem;
@@ -421,6 +488,16 @@ $glFont: 'Segoe UI';
 
                                         border: 0;
                                         border-radius: 0.3rem;
+
+                                        #save-btn-icon-content- {
+                                            width: fit-content;
+                                            height: 100%;
+
+                                            #save-btn-icon-- {
+                                                width: 100%;
+                                                height: 100%;
+                                            }
+                                        }
 
                                         /* hover */
                                         &:hover {
