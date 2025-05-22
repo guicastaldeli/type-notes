@@ -128,10 +128,6 @@ $glFont: 'Segoe UI';
                                                     height: 100%;
                                                 }
 
-                                                .btn-icon-handler {
-                                                    width: 30%;
-                                                }
-
                                                 .id-handler {
                                                     display: flex;
                                                     justify-content: start;
@@ -140,14 +136,18 @@ $glFont: 'Segoe UI';
                                                     width: 100%;
                                                 }
 
+                                                .btn-icon-handler {
+                                                    width: 30%;
+                                                }
+
                                                 #active-img-content--, #icon-img-content-- {
                                                     display: flex;
                                                     justify-content: center;
                                                     align-items: center;
 
                                                     img {
-                                                        width: 100%;
-                                                        height: 70%;
+                                                        width: clamp(5%, 1vw, 100%) !important;
+                                                        height: clamp(5%, 1vw, 60%) !important;
                                                     }
                                                 }
                 
@@ -158,6 +158,7 @@ $glFont: 'Segoe UI';
 
                                                 span {
                                                     word-wrap: break-word;
+                                                    font-size: clamp(1px, 1vw, 16px) !important;
                                                 }
                                             }
 
@@ -250,7 +251,7 @@ $glFont: 'Segoe UI';
                                             height: 100%;
 
                                             img {
-                                                width: 40%;
+                                                width: 45%;
                                                 height: 50%;
                                             }
                                         }
@@ -260,6 +261,8 @@ $glFont: 'Segoe UI';
                                         display: flex;
                                         justify-content: center;
                                         align-items: center;
+
+                                        width: 100%;
 
                                         #input-search-- {
                                             width: 100%;

@@ -407,7 +407,7 @@ export async function searchNotes(searchTerm: string, status?: string): Promise<
     
         const query = status
             ? `SELECT * FROM notes 
-                WHERE (content LIKE ? COLLATE NOCASE) 
+                WHERE content LIKE ? COLLATE NOCASE
                 AND status = ?
                 ORDER BY created_at DESC`
             : `SELECT * FROM notes 
@@ -497,7 +497,7 @@ export async function getAllAssets(): Promise<Array<{ name: string, type: string
 export async function initAssets(): Promise<void> {
     return initDB(async db => {
         const exAssets = await getAllAssets();
-        if(exAssets.length > 0) console.log(exAssets)
+        //if(exAssets.length > 0) console.log(exAssets)
 
         const assets = [
             { name: 'logo', path: new URL('./assets/img/logo.png', import.meta.url).href, type: 'image' },

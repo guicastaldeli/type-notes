@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from 'react';
+import { getAsset } from "./database";
 import DOMPurify from "dompurify";
 import useScreenSize from "./screen-resolution";
-
-const iconSettings = require('./assets/img/settings-icon-img.png');
-const iconActiveSettings = require('./assets/img/settings-icon-img-active.png')
 
 type NoteStatus = 'default' | 'archived' | 'deleted';
 
@@ -45,7 +43,24 @@ export default function NoteComponent({
     onToggleFavorite,
     }: NoteComponentProps) {
     const [showActions, setShowActions] = useState(false);
+    const [currentIcon, setCurrentIcon] = useState<string>('');
+    const [activeIcon, setActiveIcon] = useState<string>('');
     const { w } = useScreenSize();
+
+    useEffect(() => {
+        async function loadSettingsIcons() {
+            const [current, active] = await Promise.all([
+                getAsset('settings-icon'),
+                getAsset('active-settings-icon')
+            ]);
+
+            if(current) setCurrentIcon(current.content);
+            if(active) setActiveIcon(active.content);
+        }
+
+        loadSettingsIcons();
+    });
+
 
     const getTruncationLength = () => {
         if(w >= 1850) return 15;
@@ -175,9 +190,11 @@ export default function NoteComponent({
                         setShowActions(!showActions);
                     }}>
                     <div id="___icon-container">
-                        <div id="icon-content-">
-                            <img id="icon-img--" src={showActions ? iconActiveSettings : iconSettings} alt="s" />
-                        </div>
+                        {(showActions ? activeIcon : currentIcon) && (
+                            <div id="icon-content-">
+                                <img id="icon-img--" src={showActions ? activeIcon : currentIcon} alt="s" />
+                            </div>
+                        )}
                     </div>
                     <div
                         id="___note-actions-content"

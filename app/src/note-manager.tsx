@@ -570,13 +570,12 @@ export default function NoteManager({
                                     id="___save-btn"
                                     onClick={saveHandler}
                                 >
-                                    <div id="save-btn-icon-content-">
-                                        <img id="save-btn-icon--" src={saveBtnIcon} alt="back" />
-                                    </div>
-                                    { 
-                                        (currentSession == 'default' ? 'Home' : '') || 
-                                        (currentSession == 'archived' || 'deleted' ? 'Back' : '') 
-                                    }
+                                    {saveBtnIcon && (
+                                        <div id="save-btn-icon-content-">
+                                            <img id="save-btn-icon--" src={saveBtnIcon} alt="back" />
+                                        </div>
+                                    )}
+                                    { currentSession == 'default' ? 'Home' : 'Back' }
                                 </button>
                             </div>
                         </div>

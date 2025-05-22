@@ -103,9 +103,11 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
         <>
             <div id="input-search-container-content-">
                 <div id="serch-icon-content--">
-                    <div id="search-icon---">
-                        <img id="search-icon-img_" src={searchIcon} alt="icon" />
-                    </div>
+                    {searchIcon && (
+                        <div id="search-icon---">
+                            <img id="search-icon-img_" src={searchIcon} alt="icon" />
+                        </div>
+                    )}
                 </div>
 
                 <div id="input-search-content--">
