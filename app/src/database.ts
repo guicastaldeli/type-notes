@@ -1,5 +1,6 @@
 import initSqlJs, { Database, SqlJsStatic } from "sql.js";
 import { svgData } from "./img-content";
+import { NoteStatus } from "./note-component";
 
 let SQL: SqlJsStatic | null = null;
 let dbInstance: Database | null = null;
@@ -22,11 +23,11 @@ export async function setDB(): Promise<Database> {
 
                 const colums = dbInstance.exec('PRAGMA table_info(notes)');
                 const hasFavoriteColumn = colums[0].values.some((col: any) => col[1] === 'is_favorite');
+                const hasPreviousStatusColumn = colums[0].values.some((col: any) => col[1] === 'previous_status');
 
-                if(!hasFavoriteColumn) {
-                    dbInstance.exec('ALTER TABLE notes ADD COLUMN is_favorite INTEGER DEFAULT 0');
-                    saveDB(dbInstance);
-                }
+                if(!hasFavoriteColumn) dbInstance.exec('ALTER TABLE notes ADD COLUMN is_favorite INTEGER DEFAULT 0');
+                if(!hasPreviousStatusColumn) dbInstance.exec('ALTER TABLE notes ADD COLUMN previous_status TEXT DEFAULT "default"');
+                if(!hasFavoriteColumn || !hasPreviousStatusColumn) saveDB(dbInstance);
             } catch(e) {
                 console.error('Failed to load database', e);
                 dbInstance = new SQL.Database();
@@ -41,6 +42,7 @@ export async function setDB(): Promise<Database> {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
             status TEXT DEFAULT 'default',
+            previous_status TEXT DEFAULT 'default',
             is_favorite INTEGER DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -158,7 +160,33 @@ export async function initDB<T>(operation: (db: Database) => T): Promise<T> {
     export async function _updateNoteStatus(id: number, status: string): Promise<void> {
         return initDB(db => {
             const now = new Date().toISOString();
-            db.run("UPDATE notes SET status = ?, updated_at = ? WHERE id = ?", [status, now, id]);
+
+            db.run(`
+                UPDATE notes 
+                SET previous_status = status,
+                    status = ?,
+                    updated_at = ? 
+                WHERE id = ?`, 
+                [status, now, id]
+            );
+        });
+    }
+
+    export async function getNotePreviousStatus(id: number): Promise<NoteStatus> {
+        return initDB(db => {
+            const stmt = db.prepare('SELECT previous_status FROM notes WHERE id = ?');
+            stmt.bind([id]);
+
+            if(stmt.step()) {
+                const row = stmt.getAsObject();
+                const status = row.previous_status as string;
+                return status === 'archived' ||
+                       status === 'deleted' ?
+                       status : 'default';
+            }
+
+            stmt.free();
+            return 'default';
         });
     }
 

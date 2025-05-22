@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
 import { useState } from 'react';
 import { getAsset } from "./database";
+import { getNotePreviousStatus } from "./database";
 import DOMPurify from "dompurify";
 import useScreenSize from "./screen-resolution";
 
-type NoteStatus = 'default' | 'archived' | 'deleted';
+export type NoteStatus = 'default' | 'archived' | 'deleted';
 
 export interface NoteProps {    
     id: number;
@@ -270,9 +272,10 @@ export default function NoteComponent({
                                     <div id="container-btn-restore-">
                                         <button 
                                             id="btn-restore--" 
-                                            onClick={(e) => {
+                                            onClick={async (e) => {
                                                 e.stopPropagation();
-                                                onUpdateStatus(note.id, 'default');
+                                                const previousStatus = await getNotePreviousStatus(note.id);
+                                                onUpdateStatus(note.id, previousStatus);
                                             }}
                                         >
                                             Restore
