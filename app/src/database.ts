@@ -72,9 +72,7 @@ export async function setDB(): Promise<Database> {
         CREATE INDEX IF NOT EXISTS idx_text_options_type ON text_options(type);
     `);
 
-    const assetCount = dbInstance.exec('SELECT COUNT(*) FROM assets')[0].values[0][0];
-    if(assetCount === 0) await initAssets();
-
+    await initAssets(dbInstance);
     return dbInstance;
 }
 
@@ -407,7 +405,7 @@ export async function searchNotes(searchTerm: string, status?: string): Promise<
     
         const query = status
             ? `SELECT * FROM notes 
-                WHERE content LIKE ? COLLATE NOCASE
+                WHERE (content LIKE ? COLLATE NOCASE) 
                 AND status = ?
                 ORDER BY created_at DESC`
             : `SELECT * FROM notes 
@@ -439,13 +437,12 @@ export async function searchNotes(searchTerm: string, status?: string): Promise<
 }
 
 //Assets
-export async function storeAsset(name: string, type: string, content: string): Promise<void> {
-    return initDB(db => {
-        db.run(
-            'INSERT OR REPLACE INTO assets(name, type, content) VALUES(?, ?, ?)',
-            [name, type, content]
-        );
-    });
+export async function storeAsset(db: Database, name: string, type: string, content: string): Promise<void> {
+    db.run(
+        'INSERT OR REPLACE INTO assets(name, type, content) VALUES(?, ?, ?)',
+        [name, type, content]
+    );
+    saveDB(db);
 } 
 
 export async function getAsset(name: string): Promise<{ type: string; content: string } | null> {
@@ -494,10 +491,19 @@ export async function getAllAssets(): Promise<Array<{ name: string, type: string
     });
 }
 
-export async function initAssets(): Promise<void> {
-    return initDB(async db => {
-        const exAssets = await getAllAssets();
-        //if(exAssets.length > 0) console.log(exAssets)
+export async function initAssets(db: Database): Promise<void> {
+    try {
+        const stmt = db.prepare('SELECT COUNT(*) as count FROM assets');
+
+        if(stmt.step()) {
+            const row = stmt.getAsObject();
+            if(Number(row.count) > 0) {
+                stmt.free();
+                return;
+            }
+        }
+
+        stmt.free();
 
         const assets = [
             { name: 'logo', path: new URL('./assets/img/logo.png', import.meta.url).href, type: 'image' },
@@ -537,12 +543,14 @@ export async function initAssets(): Promise<void> {
                     });
                 } 
                 
-                await storeAsset(asset.name, asset.type, content);
+                await storeAsset(db, asset.name, asset.type, content);
             } catch(e) {
                 console.error(`Failed to load asset ${asset.name}: `, e);
             }
         }
-    });
+    } catch(e) {
+        console.error(e)
+    }
 }
 
 //LOG ~~~~if needed

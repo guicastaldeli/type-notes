@@ -10,8 +10,16 @@ export default function Message() {
     useEffect(() => {
         async function check() {
             try {
-                const hasViewed = await initDB(db => getSettings(db, 'has-viewed'));
                 const localStorageViewed = localStorage.getItem('has-viewed') === 'true';
+                let hasViewed =  null;
+
+                try {
+                    const db = await initDB(db => getSettings(db, 'has-viewed'));
+                    hasViewed = db;
+                } catch(e) {
+                    console.warn('Error helloworld')
+                }
+
                 setShowMessage(hasViewed !== 'true' && !localStorageViewed);
             } catch(e) {
                 console.error('Database error:', e);
@@ -26,11 +34,16 @@ export default function Message() {
     async function checkBtn() {
         try {
             setShowMessage(false);
-            await initDB(db => {
-                setSettings(db, 'has-viewed', 'true');
-                saveDB(db);
-            });
             localStorage.setItem('has-viewed', 'true');
+
+            try {
+                await initDB(db => {
+                    setSettings(db, 'has-viewed', 'true');
+                    saveDB(db);
+                });
+            } catch(e) {
+                console.warn(e);
+            }
         } catch(e) {
             console.error('Failed to update', e);
         }
@@ -38,6 +51,7 @@ export default function Message() {
 
     //Main...
     function renderMessage() {
+        if(showMessage === null) return null;
         if(!showMessage) return null;
 
         return (

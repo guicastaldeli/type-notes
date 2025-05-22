@@ -35,10 +35,16 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
 
                 const loadedAssets: Record<string, string> = {}
 
-                for(const name of assetNames) {
-                    const asset = await getAsset(name);
-                    if(asset) loadedAssets[name] = asset.content;
-                }
+                await Promise.all(
+                    assetNames.map(async (name) => {
+                        try {
+                            const asset = await getAsset(name);
+                            if(asset?.content) loadedAssets[name] = asset.content;
+                        } catch(e) {
+                            console.warn('Failed')
+                        }
+                    })
+                );
 
                 setAssets(loadedAssets);
             } catch(e) {

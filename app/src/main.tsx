@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback  } from 'react';
 
 import { NoteProps } from './note-component';
 import { Session } from './session-manager';
-import { _deleteNote, _updateNoteStatus, getNotes, initAssets, toggleFavoriteNote } from './database';
+import { _deleteNote, _updateNoteStatus, getNotes, initAssets, setDB, toggleFavoriteNote } from './database';
 import Message from './helloworld';
 import SessionManager from './session-manager';
 import GlobalHeader from './global-header';
@@ -23,7 +23,8 @@ export default function Main() {
   //Load Notes
     useEffect(() => {
       async function init() {
-        await initAssets();
+        const db = await setDB();
+        await initAssets(db);
         loadNotes();
       }
 

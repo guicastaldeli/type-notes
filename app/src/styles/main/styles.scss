@@ -247,8 +247,8 @@ $glFont: 'Segoe UI';
                                             justify-content: center;
                                             align-items: center;
 
-                                            width: 100%;
-                                            height: 100%;
+                                            width: clamp(15%, 3vw, 100%) !important;
+                                            height: clamp(15%, 2.5vw, 100%) !important;
 
                                             img {
                                                 width: 45%;
@@ -425,13 +425,10 @@ $glFont: 'Segoe UI';
                                 width: 80%;
                                 height: 80%;
 
-                                border: 0.1rem solid rgba(137, 151, 174, 0.375);
+                                border: 0.1rem solid rgba(65, 72, 84, 0.375);
                                 border-radius: 0.3rem;
 
-                                background: 
-                                    linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0)),
-                                    url(https://grainy-gradients.vercel.app/noise.svg);
-                                filter: contrast(100%) brightness(100%);
+                                background: linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0));
 
                                 #__container-text {
                                     display: flex;
@@ -478,11 +475,11 @@ $glFont: 'Segoe UI';
                                         width: 100%;
     
                                         #content-button- {
-                                            width: 20%;
+                                            width: 30%;
                                             height: 100%;
     
                                             button {
-                                                padding: 0.5em 1em;
+                                                padding: 2em 1em;
                                                 width: 100%;
 
                                                 color: rgb(255, 255, 255);
