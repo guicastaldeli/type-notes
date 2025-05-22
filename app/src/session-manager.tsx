@@ -1,17 +1,6 @@
-import React from 'react';
-import { FC, SVGProps } from 'react';
+import React, { useEffect, useState } from 'react';
 import { _updateNoteStatus, _deleteNote } from './database';
-import { NoteProps } from './note-component';
-
-//Icons
-import imgLogo from './assets/img/logo.png';
-
-import activeHomeIcon from './assets/img/active-home-icon.svg';
-import homeIcon from './assets/img/home-icon.svg';
-import activeArchiveIcon from './assets/img/active-archive-icon.svg';
-import archiveIcon from './assets/img/archive-icon.svg';
-import activeDeletedIcon from './assets/img/active-deleted-icon.svg';
-import deletedIcon from './assets/img/deleted-icon.svg';
+import { getAsset } from './database';
 
 import './styles/main/styles.scss';
 
@@ -26,31 +15,64 @@ interface SessionManagerProps {
 interface IntProps {
     id: Session;
     label: string;
-    activeIcon: FC<SVGProps<SVGSVGElement>>;
-    icon: FC<SVGProps<SVGSVGElement>>;
+    activeIcon: string;
+    icon: string;
 }
 
 export default function SessionManager({ currentSession, onSessionChange, onNotesUpdated }: SessionManagerProps) {
+    const [assets, setAssets] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadAssets() {
+            try {
+                const assetNames = [
+                    'logo',
+                    'active-home-icon', 'home-icon',
+                    'active-archive-icon', 'archive-icon',
+                    'active-deleted-icon', 'deleted-icon'
+                ];
+
+                const loadedAssets: Record<string, string> = {}
+
+                for(const name of assetNames) {
+                    const asset = await getAsset(name);
+                    if(asset) loadedAssets[name] = asset.content;
+                }
+
+                setAssets(loadedAssets);
+            } catch(e) {
+                console.error('Error loading assets', e);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        loadAssets();
+    }, []);
+
     const sessions: IntProps[] = [
         { 
             id: 'default', 
             label: 'All Notes',
-            activeIcon: activeHomeIcon,
-            icon: homeIcon
+            activeIcon: assets['active-home-icon'],
+            icon: assets['home-icon']
         },
         { 
             id: 'archived', 
             label: 'Archived Notes',
-            activeIcon: activeArchiveIcon,
-            icon: archiveIcon
+            activeIcon: assets['active-archive-icon'],
+            icon: assets['archive-icon']
         },
         { 
             id: 'deleted', 
             label: 'Deleted Notes',
-            activeIcon: activeDeletedIcon,
-            icon: deletedIcon
+            activeIcon: assets['active-deleted-icon'],
+            icon: assets['deleted-icon']
         }
     ];
+
+    if(isLoading) return <div>Loading...</div>
 
     const updateNoteStatus = async(id: number, updStatus: Session) => {
         try {
@@ -83,7 +105,9 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                 onClick={() => backHome()}>
                 <div id="_logo-content">
                     <div id='__logo-handler'>
-                        <img id='___logo' src={imgLogo} alt="logo" />
+                        {assets['logo'] ? (
+                            <img id='___logo' src={assets['logo']} alt="logo" />
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -100,22 +124,19 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
                                     className={currentSession === s.id ? 'current' : 'inactive'}
                                     onClick={() => onSessionChange(s.id)}
                                 >
-                                    <div id={`button-icon-${s.label.toLowerCase()}-container-${currentSession === s.id ? 'current' : 'inactive'}-`}>
+                                    <div id={`button-icon-${s.label.toLowerCase()}-container-${currentSession === s.id ? 'current' : 'inactive'}-`} className='btn-icon-handler'>
                                         {currentSession === s.id ? (
-                                            <s.activeIcon
-                                                id={`icon-${s.label.toLowerCase()}-${currentSession === s.id ? 'current' : 'inactive'}---`}
-                                                role='img'
-    
-                                            />
+                                            <div id='active-img-content--'>
+                                                <img id='active-img---' src={s.activeIcon} alt="logo" />
+                                            </div>
                                         ) : (
-                                            <s.icon
-                                                id={`icon-${s.label.toLowerCase()}-${currentSession === s.id ? 'current' : 'inactive'}---`}
-                                                role='img'
-                                            />
+                                            <div id='icon-img-content--'>
+                                                <img id='icon-img---' src={s.icon} alt="logo" />
+                                            </div>
                                         )}
                                     </div>
 
-                                    <div id={`button-label-${s.label.toLowerCase()}-container-`}>
+                                    <div id={`button-label-${s.label.toLowerCase()}-container-`} className='id-handler'>
                                         <span id={`button-label-${s.label.toLowerCase()}-content_`}>
                                             {s.label}
                                         </span>

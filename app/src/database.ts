@@ -1,4 +1,5 @@
 import initSqlJs, { Database, SqlJsStatic } from "sql.js";
+import { svgData } from "./img-content";
 
 let SQL: SqlJsStatic | null = null;
 let dbInstance: Database | null = null;
@@ -60,8 +61,19 @@ export async function setDB(): Promise<Database> {
             sort_order INTEGER DEFAULT 0
         );
 
+        CREATE TABLE IF NOT EXISTS assets(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
         CREATE INDEX IF NOT EXISTS idx_text_options_type ON text_options(type);
     `);
+
+    const assetCount = dbInstance.exec('SELECT COUNT(*) FROM assets')[0].values[0][0];
+    if(assetCount === 0) await initAssets();
 
     return dbInstance;
 }
@@ -424,6 +436,112 @@ export async function searchNotes(searchTerm: string, status?: string): Promise<
         console.log(e);
         return [];
     }
+}
+
+//Assets
+export async function storeAsset(name: string, type: string, content: string): Promise<void> {
+    return initDB(db => {
+        db.run(
+            'INSERT OR REPLACE INTO assets(name, type, content) VALUES(?, ?, ?)',
+            [name, type, content]
+        );
+    });
+} 
+
+export async function getAsset(name: string): Promise<{ type: string; content: string } | null> {
+    return initDB(db => {
+        try {
+            const stmt = db.prepare('SELECT type, content FROM assets WHERE name = ? COLLATE NOCASE');
+            stmt.bind([name.trim()]);
+    
+            if(stmt.step()) {
+                const row = stmt.getAsObject();
+                const asset = {
+                    type: String(row.type),
+                    content: String(row.content),
+                }
+
+                stmt.free();
+                return asset;
+            }
+    
+            stmt.free();
+            return null;
+        } catch(e) {
+            console.error(e);
+            return null;
+        }
+    })
+}
+
+export async function getAllAssets(): Promise<Array<{ name: string, type: string, content: string }>> {
+    return initDB(db => {
+        const stmt = db.prepare('SELECT name, type, content FROM assets');
+        const assets: Array<{ name: string, type: string, content: string }> = [];
+        
+        while(stmt.step()) {
+            const row = stmt.getAsObject();
+            assets.push({
+                name: String(row.name),
+                type: String(row.type),
+                content: String(row.content)
+            });
+
+        }
+        
+        stmt.free();
+        return assets;
+    });
+}
+
+export async function initAssets(): Promise<void> {
+    return initDB(async db => {
+        const exAssets = await getAllAssets();
+        if(exAssets.length > 0) console.log(exAssets)
+
+        const assets = [
+            { name: 'logo', path: new URL('./assets/img/logo.png', import.meta.url).href, type: 'image' },
+            { name: 'search-icon', path: new URL('./assets/img/search-icon.png', import.meta.url).href, type: 'image' },
+
+            { name: 'fav-notes-icon', path: new URL('./assets/img/fav-notes-icon-img.png', import.meta.url).href, type: 'image' },
+            { name: 'active-settings-icon', path: new URL('./assets/img/settings-icon-img-active.png', import.meta.url).href, type: 'image' },
+            { name: 'settings-icon', path: new URL('./assets/img/settings-icon-img.png', import.meta.url).href, type: 'image' },
+
+            //Home
+            { name: 'active-home-icon', path: new URL('./assets/img/active-home-icon.png', import.meta.url).href, type: 'image' },
+            { name: 'home-icon', path: new URL('./assets/img/home-icon.png', import.meta.url).href, type: 'image' },
+
+            //Archive
+            { name: 'active-archive-icon', path: new URL('./assets/img/active-archive-icon.png', import.meta.url).href, type: 'image' },
+            { name: 'archive-icon', path: new URL('./assets/img/archive-icon.png', import.meta.url).href, type: 'image' },
+
+            //Deleted
+            { name: 'active-deleted-icon', path: new URL('./assets/img/active-deleted-icon.png', import.meta.url).href, type: 'image' },
+            { name: 'deleted-icon', path: new URL('./assets/img/deleted-icon.png', import.meta.url).href, type: 'image' }
+        ];
+        
+        for(const asset of assets) {
+            try {
+                let content: string;
+
+                if(asset.type === 'svg') {
+                    content = await svgData(asset.path);
+                } else {
+                    const res = await fetch(asset.path);
+                    const blob = await res.blob();
+                    content = await new Promise<string>((res) => {
+                        const reader = new FileReader();
+                        reader.onload = () => res(reader.result as string);
+                        reader.readAsDataURL(blob);
+                    });
+                } 
+                
+                await storeAsset(asset.name, asset.type, content);
+            } catch(e) {
+                console.error(`Failed to load asset ${asset.name}: `, e);
+            }
+        }
+    });
 }
 
 //LOG ~~~~if needed

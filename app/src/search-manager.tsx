@@ -2,9 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from "react";
 import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
-import { searchNotes } from "./database";
-
-import searchIcon from './assets/img/search-icon.svg';
+import { getAsset, searchNotes } from "./database";
 
 interface SearchManagerProps {
     notes: NoteProps[];
@@ -20,6 +18,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     const [isEmptyRes, setIsEmptyRes] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [searchIcon, setSearchIcon] = useState<string>('');
 
     const handleClearSearch = useCallback(() => {
         setSearchError(null);
@@ -27,6 +26,19 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
         onClearSearch();
         setSearchTerm('');
     }, [onClearSearch]);
+
+    useEffect(() => {
+        async function loadSearchIcon() {
+            const asset = await getAsset('search-icon');
+            if(asset) setSearchIcon(asset.content);
+        }
+
+        loadSearchIcon();
+    }, []);
+
+    const renderImg = (svgString: string) => (
+        <div dangerouslySetInnerHTML={{ __html: svgString }} />
+    );
 
     const search = useCallback(async (term: string) => {
         //Empty
@@ -92,9 +104,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
             <div id="input-search-container-content-">
                 <div id="serch-icon-content--">
                     <div id="search-icon---">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(105, 105, 105)" className="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                        </svg>
+                        <img id="search-icon-img_" src={searchIcon} alt="icon" />
                     </div>
                 </div>
 

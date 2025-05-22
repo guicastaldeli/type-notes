@@ -31,6 +31,8 @@
   /* bar */
 }
 .main #-global-container #--bar-container #--bar {
+  position: relative;
+  margin-top: 0.5rem;
   width: 100%;
 }
 .main #-global-container #--bar-container #--bar #---bar-content {
@@ -49,6 +51,21 @@
 }
 .main #-global-container #--bar-container #--bar #---bar-content #---logo-container:hover {
   cursor: pointer;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---logo-container #_logo-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---logo-container #_logo-content #__logo-handler {
+  width: 50%;
+  height: 50%;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---logo-container #_logo-content #__logo-handler #___logo {
+  width: 100%;
+  height: 100%;
 }
 .main #-global-container #--bar-container #--bar #---bar-content #---session-manager {
   width: 100%;
@@ -73,13 +90,41 @@
   /* */
 }
 .main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button {
+  display: flex;
+  justify-content: start;
+  align-items: center;
   width: 100%;
   height: 100%;
   border: 0;
   border-radius: 0.2rem;
   font-family: "Segoe UI";
   text-align: left;
+  gap: 0.5rem;
   /* hover */
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button .btn-icon-handler {
+  width: 30%;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button .id-handler {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button #active-img-content--, .main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button #icon-img-content-- {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button #active-img-content-- img, .main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button #icon-img-content-- img {
+  width: 100%;
+  height: 70%;
 }
 .main #-global-container #--bar-container #--bar #---bar-content #---session-manager #_s-content #_s-handler #__s-content-container button:hover {
   cursor: pointer;
@@ -119,32 +164,76 @@
   height: 100%;
   /* search bar */
 }
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-- {
+.main #-global-container #-main-container #--header-content #---search-bar-container {
   width: 20vw;
   height: 5vh;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container {
+  width: 100%;
+  height: 100%;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content {
+  width: 100%;
+  height: 100%;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- {
+  display: flex;
+  width: 100%;
+  height: 100%;
   border: 0.1rem solid rgb(182, 182, 182);
   border-radius: 0.5rem;
-  padding-left: 1rem;
-  /* placeholder */
-  /* focus */
 }
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::-moz-placeholder {
-  position: relative;
-  top: -0.05rem;
-  font-size: clamp(10px, 1vw, 16px) !important;
-  color: rgb(105, 105, 105);
-}
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::placeholder {
-  position: relative;
-  top: -0.05rem;
-  font-size: clamp(10px, 1vw, 16px) !important;
-  color: rgb(105, 105, 105);
-}
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--:focus {
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content-:focus-within {
   outline: none;
   border: 0.1rem solid rgb(0, 98, 255);
 }
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::-webkit-search-cancel-button {
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #serch-icon-content-- {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #serch-icon-content-- #search-icon--- {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #serch-icon-content-- #search-icon--- img {
+  width: 40%;
+  height: 50%;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search-- {
+  width: 100%;
+  height: 100%;
+  border: 0.1rem solid transparent;
+  border-radius: 0.5rem;
+  /* placeholder */
+  /* focus */
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search--::-moz-placeholder {
+  position: relative;
+  top: -0.05rem;
+  font-size: clamp(10px, 1vw, 16px) !important;
+  color: rgb(105, 105, 105);
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search--::placeholder {
+  position: relative;
+  top: -0.05rem;
+  font-size: clamp(10px, 1vw, 16px) !important;
+  color: rgb(105, 105, 105);
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search--:focus {
+  outline: none;
+  border: 0.1rem solid transparent;
+}
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search--::-webkit-search-cancel-button {
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
@@ -157,7 +246,7 @@
   -webkit-mask-size: contain;
   /* hover */
 }
-.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search--::-webkit-search-cancel-button:hover {
+.main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- #input-search--::-webkit-search-cancel-button:hover {
   background-color: rgb(52, 52, 52);
   -webkit-transition: background-color 0.13s ease;
   transition: background-color 0.13s ease;
@@ -248,9 +337,10 @@
   align-items: center;
   width: 80%;
   height: 80%;
-  border: 0.1rem solid rgba(0, 43, 111, 0.614);
+  border: 0.1rem solid rgba(137, 151, 174, 0.375);
   border-radius: 0.3rem;
-  background: linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0));
+  background: linear-gradient(to bottom, rgba(0, 28, 73, 0.245), rgba(255, 255, 255, 0)), url(https://grainy-gradients.vercel.app/noise.svg);
+  filter: contrast(100%) brightness(100%);
 }
 .main #-global-container #-main-container #--main-note-container #--info #---message #_content-message #__container-text {
   display: flex;
@@ -311,6 +401,9 @@
   height: 100%;
 }
 .main #-global-container #-main-container #--main-note-container #--info .note-manager #_note-actions #__note-save-container #___save-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0.15rem;
   width: 10%;
   height: 2rem;
@@ -320,6 +413,15 @@
   border: 0;
   border-radius: 0.3rem;
   /* hover */
+}
+.main #-global-container #-main-container #--main-note-container #--info .note-manager #_note-actions #__note-save-container #___save-btn #save-btn-icon-content- {
+  width: -moz-fit-content;
+  width: fit-content;
+  height: 100%;
+}
+.main #-global-container #-main-container #--main-note-container #--info .note-manager #_note-actions #__note-save-container #___save-btn #save-btn-icon-content- #save-btn-icon-- {
+  width: 100%;
+  height: 100%;
 }
 .main #-global-container #-main-container #--main-note-container #--info .note-manager #_note-actions #__note-save-container #___save-btn:hover {
   cursor: pointer;

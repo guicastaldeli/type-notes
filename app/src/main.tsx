@@ -3,14 +3,13 @@ import { useEffect, useState, useCallback  } from 'react';
 
 import { NoteProps } from './note-component';
 import { Session } from './session-manager';
-import { _deleteNote, _updateNoteStatus, getNotes, toggleFavoriteNote } from './database';
+import { _deleteNote, _updateNoteStatus, getNotes, initAssets, toggleFavoriteNote } from './database';
 import Message from './helloworld';
 import SessionManager from './session-manager';
 import GlobalHeader from './global-header';
 import NoteManager from './note-manager';
 
 import './styles/main/styles.scss';
-import { setegid } from 'process';
 
 export default function Main() {
   const [isCreating, setIsCreating] = useState(false);
@@ -23,7 +22,12 @@ export default function Main() {
 
   //Load Notes
     useEffect(() => {
-      loadNotes();
+      async function init() {
+        await initAssets();
+        loadNotes();
+      }
+
+      init();
     }, [currentSession]);
 
     const loadNotes = useCallback(async (searchTerm?: string) => {
