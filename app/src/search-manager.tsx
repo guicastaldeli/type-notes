@@ -17,8 +17,8 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     const [isSearching, setIsSearching] = useState(false);
     const [isEmptyRes, setIsEmptyRes] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
-    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [searchIcon, setSearchIcon] = useState<string>('');
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleClearSearch = useCallback(() => {
         setSearchError(null);

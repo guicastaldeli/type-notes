@@ -2,14 +2,12 @@ import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-import { getNotes, _updateNote, _addNote, initTextOptions, getTextOptions, _deleteNote } from "./database";
+import { getNotes, _updateNote, _addNote, initTextOptions, getTextOptions, _deleteNote, getAsset } from "./database";
 import { NoteProps } from "./note-component";
 import { Session } from "./session-manager";
 import SessionManager from "./session-manager";
 import NoteComponent from "./note-component";
 import useScreenSize from "./screen-resolution";
-
-const saveBtnIcon = require('./assets/img/back-icon-img.png');
 
 //Props
     interface NoteManagerProps {
@@ -57,8 +55,10 @@ export default function NoteManager({
     const [selectedSize, setSelectedSize] = useState<number>(21);
     const [showFormatPicker, setShowFormatPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const noteRef = useRef<Record<number, HTMLDivElement>>({});
     const [collapsedSection, setCollapsedSection] = useState<{[key: string]: boolean}>({ fav: false, all: false });
+    const noteRef = useRef<Record<number, HTMLDivElement>>({});
+    const [saveBtnIcon, setSaveBtnIcon] = useState<string>('');
+    const [favNoteIcon, setFavNoteIcon] = useState<string>('');
     const contentRef = useRef<HTMLDivElement>(null);
     const savedSelectionRef = useRef<Range | null>(null);
     const isEditing = !!editNote;
@@ -71,6 +71,20 @@ export default function NoteManager({
     useEffect(() => {
         if(initialEditNote) setEditNote(initialEditNote);
     }, [initialEditNote]);
+
+    useEffect(() => {
+        async function loadBackIcon() {
+            const [backIcon, favIcon] = await Promise.all([
+                getAsset('back-icon'),
+                getAsset('fav-notes-icon')
+            ]);
+
+            if(backIcon) setSaveBtnIcon(backIcon.content);
+            if(favIcon) setFavNoteIcon(favIcon.content);
+        }
+
+        loadBackIcon();
+    }, []);
 
     useEffect(() => {
         if(contentRef.current && (isCreating || isEditing)) {
@@ -464,8 +478,13 @@ export default function NoteManager({
                                 <div id="--note-type-container">
                                     <div id="---note-type-content" className="fav">
                                         <div id="_note-type-handler">
-                                            <div id="__note-type">
-                                                <p>Favorite Notes</p>
+                                            <div id="__note-type-container">
+                                                <div id="___fav-notes-icon">
+                                                    <img src={favNoteIcon} alt="fav" />
+                                                </div>
+                                                <div id="___note-type-content">
+                                                    <p>Favorite Notes</p>
+                                                </div>
                                             </div>
                                             <div 
                                                 id="__toggle-notes"

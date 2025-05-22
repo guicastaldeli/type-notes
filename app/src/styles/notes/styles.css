@@ -106,10 +106,31 @@
   margin: 0;
   font-size: 13px;
 }
-#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type,
-#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type,
-#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type {
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container {
   display: flex;
+  width: 100%;
+  height: 100%;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon img,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon img,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___fav-notes-icon img {
+  width: 100%;
+  height: 50%;
+}
+#--notes-container #---notes-content .notes-list .-fav-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___note-type-content,
+#--notes-container #---notes-content .notes-list .-all-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___note-type-content,
+#--notes-container #---notes-content .notes-list .-notes-container #--note-type-container #---note-type-content #_note-type-handler #__note-type-container #___note-type-content {
+  display: flex;
+  justify-content: center;
   align-items: center;
   height: 100%;
 }

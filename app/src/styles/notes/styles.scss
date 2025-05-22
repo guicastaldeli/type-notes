@@ -112,11 +112,30 @@
                                 font-size: 13px;
                             }
 
-                            #__note-type {
+                            #__note-type-container {
                                 display: flex;
-                                align-items: center;
-                                
+
+                                width: 100%;
                                 height: 100%;
+
+                                #___fav-notes-icon {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+
+                                    img {
+                                        width: 100%;
+                                        height: 50%;
+                                    }
+                                }
+
+                                #___note-type-content {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    
+                                    height: 100%;
+                                }
                             }
 
                             #__toggle-notes {
