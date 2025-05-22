@@ -506,6 +506,7 @@ export async function initAssets(): Promise<void> {
             { name: 'fav-notes-icon', path: new URL('./assets/img/fav-notes-icon-img.png', import.meta.url).href, type: 'image' },
             { name: 'active-settings-icon', path: new URL('./assets/img/settings-icon-img-active.png', import.meta.url).href, type: 'image' },
             { name: 'settings-icon', path: new URL('./assets/img/settings-icon-img.png', import.meta.url).href, type: 'image' },
+            { name: 'back-icon', path: new URL('./assets/img/back-icon-img.png', import.meta.url).href, type: 'image' },
 
             //Home
             { name: 'active-home-icon', path: new URL('./assets/img/active-home-icon.png', import.meta.url).href, type: 'image' },
