@@ -192,18 +192,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 15%;
+  width: 20%;
 }
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #serch-icon-content-- #search-icon--- {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: clamp(15%, 3vw, 100%) !important;
-  height: clamp(15%, 2.5vw, 100%) !important;
+  width: 100%;
+  height: 100%;
 }
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #serch-icon-content-- #search-icon--- img {
-  width: 45%;
-  height: 50%;
+  width: clamp(15%, 1.5vw, 100%) !important;
+  height: clamp(15%, 1.5vw, 100%) !important;
 }
 .main #-global-container #-main-container #--header-content #---search-bar-container #_search-bar-content-container #__search-bar-content #input-search-container-content- #input-search-content-- {
   display: flex;

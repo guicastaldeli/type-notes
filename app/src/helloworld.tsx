@@ -17,7 +17,7 @@ export default function Message() {
                     const db = await initDB(db => getSettings(db, 'has-viewed'));
                     hasViewed = db;
                 } catch(e) {
-                    console.warn('Error helloworld')
+                    console.warn('Error helloworld');
                 }
 
                 setShowMessage(hasViewed !== 'true' && !localStorageViewed);
