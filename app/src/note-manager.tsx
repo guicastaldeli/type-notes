@@ -508,7 +508,7 @@ export default function NoteManager({
                             <div className="-all-notes-container">
                                 <div
                                     id="--all-notes-content"
-                                    style={{ borderTop: notes.some(note => note.isFavorite) ? undefined : '0.1rem solid rgb(182, 182, 182)' }}>
+                                    style={{ borderTop: notes.some(note => note.isFavorite) ? '0' : '0.1rem solid rgb(182, 182, 182)' }}>
                                     {notes.some(note => note.isFavorite) && 
                                         <div id="--note-type-container">
                                             <div id="---note-type-content" className="all">

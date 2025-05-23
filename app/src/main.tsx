@@ -171,16 +171,18 @@ export default function Main() {
           <div id='--main-note-container'>
             {/* Notes Conteiner */}
             <div id="--notes-container">
-              <div id="---add-container">
-                <div id="_add-content">
-                  <button 
-                    id='__add-note-btn'
-                    title='Add Note'
-                    onClick={handleAddNote}>
-                    <span>+</span>
-                  </button>
+              {currentSession === 'default' && (
+                <div id="---add-container">
+                  <div id="_add-content">
+                    <button 
+                      id='__add-note-btn'
+                      title='Add Note'
+                      onClick={handleAddNote}>
+                      <span>+</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
               
               <div id='---notes-content'>
                 <NoteManager

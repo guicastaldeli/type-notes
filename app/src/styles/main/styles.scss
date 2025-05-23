@@ -373,7 +373,7 @@ $glFont: 'Segoe UI';
                                     border-radius: 0.3rem;
         
                                     font-family: $glFont;
-                                    font-size: 1.5rem;
+                                    font-size: clamp(0.5rem, 2vw, 1.5rem) !important;
         
                                     /* hover */
                                     &:hover {
@@ -514,16 +514,27 @@ $glFont: 'Segoe UI';
                             height: 100%;
 
                             #_note-actions {
+                                display: flex;
+                                align-items: start;
+                                justify-content: start;
+
+                                height: 5%;
+
                                 #__note-save-container {
+                                    width: 100%;
+                                    height: 100%;
+
                                     #___save-btn {
                                         display: flex;
                                         justify-content: center;
                                         align-items: center;
-                                        margin: 0.15rem;
-                                        width: 10%;
-                                        height: 2rem;
 
-                                        font-size: 13px;
+                                        width: 10%;
+                                        height: 90%;
+
+                                        margin: 0.3rem;
+
+                                        font-size: clamp(5px, 1vw, 13px) !important;
 
                                         color: rgb(255, 255, 255);
                                         background-color: rgb(0, 98, 255);
@@ -532,12 +543,16 @@ $glFont: 'Segoe UI';
                                         border-radius: 0.3rem;
 
                                         #save-btn-icon-content- {
-                                            width: fit-content;
+                                            display: flex;
+                                            justify-content: center;
+                                            align-items: center;
+
+                                            width: 15%;
                                             height: 100%;
 
                                             #save-btn-icon-- {
-                                                width: 100%;
-                                                height: 100%;
+                                                width: clamp(5%, 2vw, 100%) !important;
+                                                height: clamp(5%, 1vw, 80%) !important;
                                             }
                                         }
 
@@ -557,7 +572,7 @@ $glFont: 'Segoe UI';
                                 display: flex;
                                 flex-direction: column;
 
-                                gap: 0.5rem;
+                                gap: 1.2rem;
 
                                 width: 100%;
                                 height: 100%;
