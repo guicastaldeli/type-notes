@@ -60,25 +60,25 @@ export default function SessionManager({ currentSession, onSessionChange, onNote
     const sessions: IntProps[] = [
         { 
             id: 'default', 
-            label: 'All Notes',
+            label: 'Todas as Notas',
             activeIcon: assets['active-home-icon'],
             icon: assets['home-icon']
         },
         { 
             id: 'archived', 
-            label: 'Archived Notes',
+            label: 'Notas Arquivadas',
             activeIcon: assets['active-archive-icon'],
             icon: assets['archive-icon']
         },
         { 
             id: 'deleted', 
-            label: 'Deleted Notes',
+            label: 'Notas Deletadas',
             activeIcon: assets['active-deleted-icon'],
             icon: assets['deleted-icon']
         }
     ];
 
-    if(isLoading) return <div>Loading...</div>
+    if(isLoading) return <div>Carregando...</div>
 
     const updateNoteStatus = async(id: number, updStatus: Session) => {
         try {

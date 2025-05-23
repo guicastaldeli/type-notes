@@ -467,7 +467,7 @@ export default function NoteManager({
                     <div id="_empty-note-container">
                         <div id="__empty-note-content">
                             <span id="___empty-note">
-                                No matching notes found.
+                                Nenhuma nota encontrada.
                             </span>
                         </div>
                     </div>
@@ -483,7 +483,7 @@ export default function NoteManager({
                                                     <img src={favNoteIcon} alt="fav" />
                                                 </div>
                                                 <div id="___note-type-content">
-                                                    <p>Favorite Notes</p>
+                                                    <p>Notas Favoritas</p>
                                                 </div>
                                             </div>
                                             <div 
@@ -514,7 +514,7 @@ export default function NoteManager({
                                             <div id="---note-type-content" className="all">
                                                 <div id="_note-type-handler">
                                                     <div id="__note-type">
-                                                        <p>All Notes</p>
+                                                        <p>Todas as Notas</p>
                                                     </div>
                                                     <div 
                                                         id="__toggle-notes"
@@ -575,7 +575,7 @@ export default function NoteManager({
                                             <img id="save-btn-icon--" src={saveBtnIcon} alt="back" />
                                         </div>
                                     )}
-                                    { currentSession == 'default' ? 'Home' : 'Back' }
+                                    Voltar
                                 </button>
                             </div>
                         </div>

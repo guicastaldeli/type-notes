@@ -59,14 +59,14 @@ export default function Message() {
                 <div id="_content-message">
                     <div id="__container-text">
                         <div id="___content-text">
-                            <p>Welcome to Notes!</p>
-                            <span>This is your first visit. Create your first note by clicking the <span id='pb'>+</span> button.</span>
+                            <p>Bem-vindo ao Notes!</p>
+                            <span>Essa é sua primeira visita. Crie sua primeira nota clicando no botão <span id='pb'>+</span></span>
                         </div>
                         <div id="___content-button-container">
                             <div id='content-button-'>
                                 <button onClick={checkBtn}>
                                     <div>
-                                        <span>Got it</span>
+                                        <span>Entendido</span>
                                     </div>
                                 </button>
                             </div>

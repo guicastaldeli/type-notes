@@ -144,7 +144,7 @@ export default function NoteComponent({
                 const divsEmpty = !hasContent;
 
                 if (divsEmpty) {
-                    const emptyContent = '<div id="empty-content-">No additional text</div>';
+                    const emptyContent = '<div id="empty-content-">Sem texto adicional</div>';
                     tempDiv.insertAdjacentHTML('beforeend', emptyContent);
                 }
             //
@@ -213,7 +213,7 @@ export default function NoteComponent({
                                                 onUpdateStatus(note.id, 'archived');
                                             }}
                                         >
-                                            Archive
+                                            Arquivar
                                         </button>
                                     </div>
                                     <div id="container-btn-delete-">
@@ -224,7 +224,7 @@ export default function NoteComponent({
                                                 onUpdateStatus(note.id, 'deleted');
                                             }}
                                         >
-                                            Delete
+                                            Deletar
                                         </button>
                                     </div>
                                     <div id="container-btn-favorite-">
@@ -232,7 +232,7 @@ export default function NoteComponent({
                                             id="btn-favorite--"
                                             onClick={toggleFavorite}
                                         >
-                                            {note.isFavorite ? 'Unfavorite' : 'Favorite'}
+                                            {note.isFavorite ? 'Desfavoritar' : 'Favoritar'}
                                         </button>
                                     </div>
                                 </div>
@@ -249,7 +249,7 @@ export default function NoteComponent({
                                                 onUpdateStatus(note.id, 'default');
                                             }}
                                         >
-                                            Restore
+                                            Restaurar
                                         </button>
                                     </div>
                                     <div id="container-btn-delete-">
@@ -260,7 +260,7 @@ export default function NoteComponent({
                                                 onUpdateStatus(note.id, 'deleted'); 
                                             }}
                                         >
-                                            Delete
+                                            Deletar
                                         </button>
                                     </div>
                                 </div>
@@ -278,7 +278,7 @@ export default function NoteComponent({
                                                 onUpdateStatus(note.id, previousStatus);
                                             }}
                                         >
-                                            Restore
+                                            Restaurar
                                         </button>
                                     </div>
                                     <div id="container-btn-delete-perm-">
@@ -289,7 +289,7 @@ export default function NoteComponent({
                                                 onDelete(note.id);
                                             }}
                                         >
-                                            Delete
+                                            Deletar
                                         </button>
                                     </div>
                                 </div>

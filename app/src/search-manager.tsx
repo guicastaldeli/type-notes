@@ -92,8 +92,8 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
     //Session Display
     const sessionDisplay = () => {
         if(currentSession === 'default') return '';
-        if(currentSession === 'archived') return 'Archived';
-        if(currentSession === 'deleted') return 'Deleted';
+        if(currentSession === 'archived') return 'Arquivadas';
+        if(currentSession === 'deleted') return 'Deletadas';
 
         return currentSession;
     }
@@ -114,8 +114,8 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
                     <input 
                         type="search"
                         id="input-search--"
-                        title={`Search${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes`}
-                        placeholder={`Search for${sessionDisplay() ? ' ' + sessionDisplay() : ''} Notes...`}
+                        title={`Pesquisar Notas${sessionDisplay() ? ' ' + sessionDisplay() : ''}`}
+                        placeholder={`Pesquisar Notas${sessionDisplay() ? ' ' + sessionDisplay() : ''}...`}
                         value={searchTerm}
                         onChange={handleSearchChange} 
                     />
@@ -127,7 +127,7 @@ export default function SearchManager({ notes, currentSession, onSearch, onClear
                 <div className="search-loading-container">
                     <div id="-search-loading-content">
                         <span id="--search-loading">
-                            Searching...
+                            Procurando...
                         </span>
                     </div>
                 </div>
