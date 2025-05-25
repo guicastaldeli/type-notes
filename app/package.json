@@ -53,6 +53,7 @@
     "os": false
   },
   "devDependencies": {
-    "@types/react-resizable": "^3.0.8"
+    "@types/react-resizable": "^3.0.8",
+    "sass": "^1.89.0"
   }
 }
