@@ -7,9 +7,19 @@ let dbInstance: Database | null = null;
 
 export async function setDB(): Promise<Database> {
     if(!SQL) {
-        SQL = await initSqlJs({
-            locateFile: () => new URL('../../app/node_modules/sql.js/dist/sql-wasm.wasm', import.meta.url).href
-        });
+        try {
+            const wasmResponse = await fetch('sql-wasm.wasm');
+            const wasmBinary = await wasmResponse.arrayBuffer();
+            
+            SQL = await initSqlJs({
+                wasmBinary,
+                locateFile: () => ''
+            });
+        } catch(e) {
+            SQL = await initSqlJs({
+                locateFile: () => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm`
+            });
+        }
     }
 
     if(!dbInstance) {
@@ -19,7 +29,7 @@ export async function setDB(): Promise<Database> {
             try {
                 const parsed = JSON.parse(savedDb);
                 const binaryArray = new Uint8Array(parsed.data);
-                dbInstance = new SQL.Database(binaryArray);
+                dbInstance = new SQL!.Database(binaryArray);
 
                 const colums = dbInstance.exec('PRAGMA table_info(notes)');
                 const hasFavoriteColumn = colums[0].values.some((col: any) => col[1] === 'is_favorite');
